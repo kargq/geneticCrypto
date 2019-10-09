@@ -24,6 +24,30 @@ class Individual {
     fun chromosomeSize(): Int {
         return chromosome.size
     }
+
+    fun applyScrambleMutation(scrambleSize: Int = chromosome.size / 2) {
+        val randomIndices = ArrayList<Int>(scrambleSize)
+        val range: MutableList<Int> = (0..chromosomeSize()).toMutableList()
+        for (i in 0 until scrambleSize) {
+            val randIndex = range.random()
+            range.remove(randIndex)
+            randomIndices.add(randIndex)
+        }
+
+        val toScramble = CharArray(randomIndices.size)
+
+        for ((iterIndex, ind) in randomIndices.withIndex()) {
+            toScramble[iterIndex] = chromosome[ind]
+        }
+
+        val scrambled = toScramble.asList().shuffled()
+
+        for ((iterIndex, ind) in randomIndices.withIndex()) {
+            chromosome[ind] = scrambled[iterIndex]
+        }
+    }
+
+
 }
 
 fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {

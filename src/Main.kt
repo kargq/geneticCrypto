@@ -29,6 +29,7 @@ class Main(
             applySelectionToPopulation()
 
             // apply crossover and mutation
+
         }
     }
 
