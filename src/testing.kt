@@ -1,14 +1,17 @@
-fun main() {
-//    println(
-//        funcTest.fitness(
-//            "nyhtzoeirh",
-//            "wyswfslnwzqwdwnvlesiayhidthqhgndwysnlzicjjpakadtveiitwrlhisktberwjtkmfdlkfgaemtjdctqfvabhehwdjeadkwkfkcdxcrxwwxeuvgowvbnwycowgfikvoxklrpfkgyawnrhftkhwrpwzcjksnszywyzkhdxcrxwslhrjiouwpilszagxasdghwlaocvkcpzwarwzcjgxtwhfdajstxqxbklstxreojveerkrbekeouwysafyichjilhgsxqxtkjanhwrbywlhpwkvaxmnsddsjlslghcopagnhrwdeluhtgjcqfvsxqkvakuitqtskxzagpfbusfddidioauaaffalgkiilfbswjehxjqahliqovcbkmcwhodnwksxreojvsdpskopagnhwysafyichdwczlcdpgcowwlpeffwlwacgjqewftxizqlawctvftimkirrwojqvevuvskxuobscstalyduvlpwftpgrzknwlpfv"
-//        )
-//    )
-
-    for (i in 2..1) {
-        println(i)
-    }
-
+fun testOnePointCrossover(){
     onePointCrossover(Individual(5), Individual(5))
+
+}
+
+fun testMutation() {
+    val indiv = Individual(15)
+    println(indiv.getChromosomeString())
+    indiv.applyScrambleMutation(10)
+    println(indiv.getChromosomeString())
+}
+
+
+fun main() {
+//    testMutation()
+
 }

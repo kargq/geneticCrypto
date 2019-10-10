@@ -27,7 +27,7 @@ class Individual {
 
     fun applyScrambleMutation(scrambleSize: Int = chromosome.size / 2) {
         val randomIndices = ArrayList<Int>(scrambleSize)
-        val range: MutableList<Int> = (0..chromosomeSize()).toMutableList()
+        val range: MutableList<Int> = (0 until chromosomeSize()).toMutableList()
         for (i in 0 until scrambleSize) {
             val randIndex = range.random()
             range.remove(randIndex)
@@ -35,7 +35,6 @@ class Individual {
         }
 
         val toScramble = CharArray(randomIndices.size)
-
         for ((iterIndex, ind) in randomIndices.withIndex()) {
             toScramble[iterIndex] = chromosome[ind]
         }
