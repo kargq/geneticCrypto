@@ -71,9 +71,15 @@ class GA(
 
     fun evolve() {
 
-        population.sortBy {
-            fitness(indiv = it)
-        }
+//        val fitnessMap = HashMap<Individual, Double>()
+//
+//        for (indiv in population) {
+//            fitnessMap[indiv] = fitness(indiv)
+//        }
+//
+//        population.sortBy {
+//            fitness(indiv = it)
+//        }
 
         val bestIndivCount:Int = (bestSelectRatio * popSize.toDouble()).toInt()
 
