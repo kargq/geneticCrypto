@@ -97,8 +97,8 @@ public class funcTest {
         String d = c.toLowerCase();
         d = d.replaceAll("[^a-z]", "");
         d = d.replaceAll("\\s", "");
-        int[] cipher = new int[c.length()];
-        for (int x = 0; x < c.length(); x++) {
+        int[] cipher = new int[d.length()];
+        for (int x = 0; x < d.length(); x++) {
             cipher[x] = ((int) d.charAt(x)) - 97;
         }
 
@@ -139,7 +139,7 @@ public class funcTest {
     }
 
     public static void main(String[] args) {
-        String p = "This is some text to decrypt";
+        String p = "This is some text to getDecryptionKey";
         String k = "passwo--234rd";
 
         String c = encrypt(k, p);
@@ -150,7 +150,7 @@ public class funcTest {
         System.out.println(fit);
         //Note the relatively high fitness value, this is because the String p is short. 
         //When messages are too short the frequency distribution of characters will not necessarily match the expected values 
-        //Longer messages will be easier to decrypt, since in general the frequency distribution of their characters will match the expected distribution
+        //Longer messages will be easier to getDecryptionKey, since in general the frequency distribution of their characters will match the expected distribution
         //For example 
 
         String p2 = "Hey, look at me. It's your fault, it's everyone's fault, who cares. Are you up for this? Are you? Look, I just need to know, cause the city is flying. Okay, look, the city is flying, we're fighting an army of robots, and I have a bow and arrow. None of this makes sense. But I'm going back out there because it's my job. Okay? And I can't do my job and babysit. It doesn't matter what you did, or what you were. If you go out there, you fight, and you fight to kill. Stay in here, you're good, I'll send your brother to come find you, but if you step out that door, you are an Avenger. Alright, good chat. Yeah, the city is flying.";

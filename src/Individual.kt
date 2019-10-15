@@ -1,4 +1,4 @@
-class Individual {
+class Individual{
 
     var chromosome: CharArray
 
@@ -13,7 +13,8 @@ class Individual {
     constructor(chromosomeSize: Int) {
         chromosome = CharArray(chromosomeSize)
         for (i in 0 until chromosomeSize) {
-            chromosome[i] = ((97..122) + 45).random().toChar()
+            chromosome[i] = (('a'..'z') + '-').random()
+//            chromosome[i] = ((97..122) + 45).random().toChar()
         }
     }
 
@@ -46,6 +47,11 @@ class Individual {
         }
     }
 
+    override fun toString(): String {
+        val obj = super.toString()
+
+        return "Obj: ${obj} Chromosome: ${getChromosomeString()}"
+    }
 
 }
 
