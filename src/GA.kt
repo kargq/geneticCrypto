@@ -15,6 +15,8 @@ class GA(
     var population: MutableList<Individual> = ArrayList()
 
     init {
+        println("Parameters: popSize: $popSize crossOverRate: $crossOverRate maxKeySize: $maxKeySize maxGen: $maxGen selectionSampleSize: $selectionSampleSize mutationRate: $mutationRate bestSelectionRatio: $bestSelectRatio")
+
         encryptedString = sanitizeString(encryptedString)
     }
 
