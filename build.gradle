@@ -10,9 +10,10 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven{
-        url 'https://repo.spring.io/libs-release/'
-    }
+    maven { url "https://repo.spring.io/libs-release/" }
+    maven { url "https://dl.bintray.com/mipt-npm/dataforge" }
+    maven { url "https://dl.bintray.com/mipt-npm/scientifik" }
+    maven { url "https://dl.bintray.com/kotlin/ktor/" }
 }
 
 dependencies {
@@ -22,7 +23,7 @@ dependencies {
     // Custom libraries
     // https://mvnrepository.com/artifact/com.beust/klaxon
     compile group: 'com.beust', name: 'klaxon', version: '5.0.1'
-
+    implementation("scientifik:plotlykt-server:0.1.2")
 }
 
 compileKotlin {

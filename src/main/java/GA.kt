@@ -1,31 +1,48 @@
+import hep.dataforge.meta.buildMeta
+import scientifik.plotly.Plot2D
+import scientifik.plotly.Plotly
+import scientifik.plotly.models.Trace
+import scientifik.plotly.server.PlotlyServer
+import scientifik.plotly.server.serve
+import java.io.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class GA(
-        val popSize: Int = 10000,
-        val crossOverRate: Double = 0.8,
-        val maxKeySize: Int = 8,
-        val maxGen: Int = 100,
-        var encryptedString: String = "wyswfslnwzqwdwnvlesiayhidthqhgndwysnlzicjjpakadtveiitwrlhisktberwjtkmfdlkfgaemtjdctqfvabhehwdjeadkwkfkcdxcrxwwxeuvgowvbnwycowgfikvoxklrpfkgyawnrhftkhwrpwzcjksnszywyzkhdxcrxwslhrjiouwpilszagxasdghwlaocvkcpzwarwzcjgxtwhfdajstxqxbklstxreojveerkrbekeouwysafyichjilhgsxqxtkjanhwrbywlhpwkvaxmnsddsjlslghcopagnhrwdeluhtgjcqfvsxqkvakuitqtskxzagpfbusfddidioauaaffalgkiilfbswjehxjqahliqovcbkmcwhodnwksxreojvsdpskopagnhwysafyichdwczlcdpgcowwlpeffwlwacgjqewftxizqlawctvftimkirrwojqvevuvskxuobscstalyduvlpwftpgrzknwlpfv",
-        val selectionSampleSize: Int = 3,
-        val mutationRate: Double = 0.3,
-        val bestSelectRatio: Double = 0.1
+    val popSize: Int = 10000,
+    val crossOverRate: Double = 0.8,
+    val maxKeySize: Int = 8,
+    val maxGen: Int = 100,
+    var encryptedString: String = "wyswfslnwzqwdwnvlesiayhidthqhgndwysnlzicjjpakadtveiitwrlhisktberwjtkmfdlkfgaemtjdctqfvabhehwdjeadkwkfkcdxcrxwwxeuvgowvbnwycowgfikvoxklrpfkgyawnrhftkhwrpwzcjksnszywyzkhdxcrxwslhrjiouwpilszagxasdghwlaocvkcpzwarwzcjgxtwhfdajstxqxbklstxreojveerkrbekeouwysafyichjilhgsxqxtkjanhwrbywlhpwkvaxmnsddsjlslghcopagnhrwdeluhtgjcqfvsxqkvakuitqtskxzagpfbusfddidioauaaffalgkiilfbswjehxjqahliqovcbkmcwhodnwksxreojvsdpskopagnhwysafyichdwczlcdpgcowwlpeffwlwacgjqewftxizqlawctvftimkirrwojqvevuvskxuobscstalyduvlpwftpgrzknwlpfv",
+    val selectionSampleSize: Int = 3,
+    val mutationRate: Double = 0.3,
+    val bestSelectRatio: Double = 0.1,
+    val out: PrintStream = System.out,
+    val graphOutFile: File = File("tests.json"),
+    val toPlot: Boolean = true
 ) {
     // larger k is more pressure
     var population: MutableList<Individual> = ArrayList()
+    //    var generationsJsonArray = GenerationsJsonArray()
+
+    // plotting stuff
+    var server: PlotlyServer? = null
+    var plot: Plot2D? = null
+    var updateTrace: Trace? = null
 
     init {
-        println("Parameters: popSize: $popSize crossOverRate: $crossOverRate maxKeySize: $maxKeySize maxGen: $maxGen selectionSampleSize: $selectionSampleSize mutationRate: $mutationRate bestSelectionRatio: $bestSelectRatio")
-
+        out.println("Parameters: popSize: $popSize crossOverRate: $crossOverRate maxKeySize: $maxKeySize maxGen: $maxGen selectionSampleSize: $selectionSampleSize mutationRate: $mutationRate bestSelectionRatio: $bestSelectRatio")
         encryptedString = sanitizeString(encryptedString)
+        if (toPlot) startPlot()
     }
 
     fun getDecryptionKey(): String {
         initializeRandomPopulation()
         for (gen in 1..maxGen) {
-            println("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${minFitnessIndividual?.getChromosomeString()}")
-            println("Population: ${populationString()}")
+            out.println("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${minFitnessIndividual?.getChromosomeString()}")
+            out.println("Population: ${populationString()}")
             evolve()
+            updatePlot(gen.toString())
         }
 
         return minFitnessIndividual!!.getChromosomeString()
@@ -58,8 +75,56 @@ class GA(
         return result
     }
 
+    fun startPlot() {
+        val x = (0 until popSize).map { it.toDouble() }
+        val y = (0 until popSize).map { 0.0 }
+        updateTrace = Trace.build(x = x.toDoubleArray(), y = y.toDoubleArray()) { name = "update" }
+
+        val serverMeta = buildMeta {
+            "update" to {
+                "enabled" to true
+            }
+        }
+
+        plot = Plotly.plot2D {
+            trace(updateTrace!!)
+            layout {
+                title = "Individual fitness in population"
+                xaxis {
+                    title = "Individuals"
+                }
+                yaxis {
+                    title = "Fitness"
+                }
+            }
+        }
+
+
+        server = Plotly.serve(serverMeta) {}
+
+        server!!.plot(plot!!)
+
+
+//        readLine()
+    }
+
+    fun updatePlot(plotName: String = "undefined") {
+        if (toPlot) {
+            val x = (0 until population.size).map { it.toDouble() }
+            val y = (0 until population.size).map { fitness(population[it]) }
+            updateTrace!!.y = y
+            val trace = Trace.build(x = x.toDoubleArray(), y = y.toDoubleArray()) { name = plotName }
+            plot!!.trace(trace)
+        }
+    }
+
+    fun closePlot() {
+        server!!.stop()
+
+    }
+
     fun evolve() {
-        val bestIndivCount:Int = (bestSelectRatio * popSize.toDouble()).toInt()
+        val bestIndivCount: Int = (bestSelectRatio * popSize.toDouble()).toInt()
 
         val bestIndividualsToPreserve = ArrayList<Individual>()
 
@@ -198,12 +263,39 @@ class GA(
 
 }
 
+//class GenerationJson(
+//    val name: String = "test",
+//    val name3: String = "test"
+//
+//) {
+//    fun toJson() {
+////        val product = Product("HDD")
+//        val result = Klaxon().toJsonString(this)
+//
+////        assertThat(result).isEqualTo("""{"name" : "HDD"}""")
+//    }
+//}
+//
+//class GenerationsJsonArray(
+//    val generations: JsonArray<GenerationJson> = JsonArray()
+//)
+//
+//class GAJsonLog(
+//    val test: JsonArray<GenerationsJsonArray> = JsonArray()
+//)
+
+
 fun main() {
     val main = GA()
     println(main.populationString())
     val decryptionKey = main.getDecryptionKey()
     println(decryptionKey)
     println(funcTest.decrypt(decryptionKey, main.encryptedString))
-    println("Fitness: ${funcTest.fitness(decryptionKey, main.encryptedString)} Min fitness found: ${main.minFitness} for ${main.minFitnessIndividual?.getChromosomeString()}")
+    println(
+        "Fitness: ${funcTest.fitness(
+            decryptionKey,
+            main.encryptedString
+        )} Min fitness found: ${main.minFitness} for ${main.minFitnessIndividual?.getChromosomeString()}"
+    )
     println("Fitness: ${funcTest.fitness("drowssap", main.encryptedString)}")
 }
