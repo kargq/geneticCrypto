@@ -69,3 +69,5 @@ fabric.properties
 
 # Custom from here on
 .idea/misc.xml
+.gradle
+build/
