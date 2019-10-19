@@ -49,13 +49,13 @@ fun plottingTest() {
 //    val y2 = x.map { cos(2.0 * PI * it) }
 //
 //
-//    val plot = Plotly.plot2D {
-//        updateTrace(x.toDoubleArray(), y.toDoubleArray()) {
-//            name = "for a single updateTrace in graph its name would be hidden"
+//    val populationFitnessPlot = Plotly.plot2D {
+//        currPopulationTrace(x.toDoubleArray(), y.toDoubleArray()) {
+//            name = "for a single currPopulationTrace in graph its name would be hidden"
 //        }
 //
-//        updateTrace(x2.toDoubleArray(), y2.toDoubleArray()) {
-//            name = "for a single updateTrace in graph its name would be hidden"
+//        currPopulationTrace(x2.toDoubleArray(), y2.toDoubleArray()) {
+//            name = "for a single currPopulationTrace in graph its name would be hidden"
 //        }
 //
 //
@@ -81,13 +81,13 @@ fun plottingTest() {
 //        val x = (0..100).map { it.toDouble() / 100.0 }
 //        val y = x.map { sin(2.0 * PI * it) }
 //
-//        val updateTrace = Trace.build(x = x, y = y) { name = "sin" }
+//        val currPopulationTrace = Trace.build(x = x, y = y) { name = "sin" }
 
 
         //root level plots go to default page
 
         val plot = Plotly.plot2D {
-            //            updateTrace(updateTrace!!)
+            //            currPopulationTrace(currPopulationTrace!!)
 
             layout {
                 title = "Graph name"
@@ -100,10 +100,10 @@ fun plottingTest() {
             }
         }
 
-//        plot {
-////            updateTrace(updateTrace)
+//        populationFitnessPlot {
+////            currPopulationTrace(currPopulationTrace)
 //            layout {
-//                title = "Dynamic plot"
+//                title = "Dynamic populationFitnessPlot"
 //                xaxis { title = "x axis name" }
 //                yaxis { title = "y axis name" }
 //            }
@@ -115,7 +115,7 @@ fun plottingTest() {
 //                delay(10)
 //                time += 10
 //                val dynamicY = x.map { sin(2.0 * PI * (it + time.toDouble() / 1000.0)) }
-//                updateTrace.y = dynamicY
+//                currPopulationTrace.y = dynamicY
 //            }
 //        }
     }
@@ -129,7 +129,7 @@ fun plottingTest() {
 
 
 fun main() {
-    plottingTest()
+//    plottingTest()
 
 
 //    experiments.testMutation()
@@ -140,12 +140,19 @@ fun main() {
 //    testTournamentSelection()
 
 
+
+
 //    testJson()
 }
 //
-//fun testJson() {
-//    println(Klaxon().toJsonString(GenerationJson()))
-//
+fun testJson() {
+    val hmap: HashMap<String, Double> = HashMap()
+    hmap["what"] = 0.1111
+    hmap["whut"] = 0.2222
+
+
+    println(Klaxon().toJsonString(hmap))
+
 //    val result = Klaxon().parse<GenerationJson>(
 //        """
 //        {
@@ -159,4 +166,4 @@ fun main() {
 //    arr.add(GenerationJson())
 //    arr.add(GenerationJson())
 //    println(Klaxon().toJsonString(GenerationsJsonArray(arr)))
-//}
+}

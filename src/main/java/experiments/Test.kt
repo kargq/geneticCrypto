@@ -1,6 +1,7 @@
 package experiments
 
 import GA
+import Individual
 import funcTest
 
 class Test(
@@ -11,18 +12,21 @@ class Test(
 
     init {
         if (givenKey != null) {
-            println(funcTest.fitness(givenKey, ga.encryptedString))
+
+            println("Fitness of given key from in use func: ${GA(toPlot = false, encryptedString = ga.encryptedString, maxKeySize = ga.maxKeySize).fitness(Individual(givenKey))}")
             println("Decrypted: ${funcTest.decrypt(givenKey, ga.encryptedString)}")
         }
 
         println("Trying to determine decrpytion key ...")
 
-        val key = ga.getDecryptionKey()
+        val keys = ga.getDecryptionKey()
 
 
 
-        println("""Possible key: $key 
-            Decrypted text from this key: ${funcTest.decrypt(key, ga.encryptedString)}
+
+
+        println("""Possible keys: $keys 
+            Decrypted text from this key: ${funcTest.decrypt(keys[0], ga.encryptedString)}
             """.trimMargin())
 
     }

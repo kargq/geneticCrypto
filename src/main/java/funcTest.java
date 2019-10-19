@@ -105,8 +105,8 @@ public class funcTest {
         String d = c.toLowerCase();
         d = d.replaceAll("[^a-z]", "");
         d = d.replaceAll("\\s", "");
-        int[] cipher = new int[c.length()];
-        for (int x = 0; x < c.length(); x++) {
+        int[] cipher = new int[d.length()];
+        for (int x = 0; x < d.length(); x++) {
             cipher[x] = ((int) d.charAt(x)) - 97;
         }
 

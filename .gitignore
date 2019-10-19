@@ -71,3 +71,7 @@ fabric.properties
 .idea/misc.xml
 .gradle
 build/
+
+*.test.csv
+# tests
+# graphs
