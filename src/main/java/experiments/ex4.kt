@@ -13,7 +13,7 @@ fun main() {
             origMutationRate = 0.3,
             crossOverRate = 0.9,
             bestSelectRatio = 0.1,
-            maxGen = 4000,
+            maxGen = 500,
             selectionSampleSize = 3,
             maxKeySize = 34,
             mutationType = Individual.MutationType.SCRAMBLE_INSERTION,

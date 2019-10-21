@@ -1,6 +1,7 @@
 import hep.dataforge.meta.buildMeta
 import scientifik.plotly.Plot2D
 import scientifik.plotly.Plotly
+import scientifik.plotly.makeFile
 import scientifik.plotly.models.Trace
 import scientifik.plotly.server.PlotlyServer
 import scientifik.plotly.server.serve
@@ -16,7 +17,6 @@ class FitnessIndividual(chromosome: String, fitness: Double) : Individual(chromo
     var fitness: Double? = null
 }
 
-
 class GA(
     val popSize: Int = 10000,
     val crossOverRate: Double = 0.8,
@@ -26,13 +26,14 @@ class GA(
     val selectionSampleSize: Int = 3,
     val origMutationRate: Double = 0.3,
     val bestSelectRatio: Double = 0.1,
-    val csvOutput: PrintStream = PrintStream(File("$TEST_DIR/fitness${(0..999999).random()}.test.csv")),
+    val testAppendId: Int = (0..999999).random(),
+    val csvOutput: PrintStream = PrintStream(File("$TEST_DIR/fitness$testAppendId.test.csv")),
     val graphOutFile: File = File("tests.json"),
     val toPlot: Boolean = true,
     val mutationType: Individual.MutationType = Individual.MutationType.SCRAMBLE,
     val adaptiveMutationRate: Boolean = false,
     val adaptiveMutationRateChange: Double = 0.05,
-    val infoOutput: PrintStream = PrintStream(File("$TEST_DIR/info${(0..999999).random()}.test.txt")),
+    val infoOutput: PrintStream = PrintStream(File("$TEST_DIR/info$testAppendId.test.txt")),
     val crossoverType: CrossoverType = CrossoverType.ONE_POINT
 ) {
     // larger k is more pressure
@@ -48,7 +49,6 @@ class GA(
     var currPopulationTrace: Trace? = null
     var genMeanPlot: Plot2D? = null
     var genMeanTrace: Trace? = null
-    var genMinPlot: Plot2D? = null
     var genMinTrace: Trace? = null
     var genMaxTrace: Trace? = null
     // eo plotting stuff
@@ -129,9 +129,8 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
                 minIndivList.add(indiv.getChromosomeString())
             }
         }
-
+        closePlot()
         return minIndivList.toList()
-
 //        return minFitnessIndividual!!.getChromosomeString()
     }
 
@@ -286,8 +285,10 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
     }
 
     fun closePlot() {
-        server!!.stop()
-
+        if (toPlot) {
+            genMeanPlot!!.makeFile(File("tests/plot$testAppendId"))
+            server!!.stop()
+        }
     }
 
     fun doCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {

@@ -73,5 +73,5 @@ fabric.properties
 build/
 
 *.test.csv
-# tests
-# graphs
+# tests/
+# graphs/

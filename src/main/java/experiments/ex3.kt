@@ -15,7 +15,7 @@ fun main() {
             crossOverRate = 0.9,
             bestSelectRatio = 0.1,
             maxGen = 300
-        ), givenKey = ex4key
+        ), givenKey = ex3key
     )
 
     // Generation: 100 Population: 3000 Min fitness prev gen: 0.3661494017869234 for ttisjoesueesriefeereefspwe
