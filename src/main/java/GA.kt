@@ -112,7 +112,7 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
                     population.shuffle()
                     truncatePopulationToMaxSize()
                 }
-                if (newBest < prevBest) {
+                if (newWorst > prevWorst) {
 //                    mutationRate = origMutationRate
                 }
             }
@@ -177,9 +177,9 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
             val quintgramFitness =
                 quintgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
 
-            val result = (fitness1 + bigramFitness + trigramFitness + quadgramFitness + quintgramFitness) / 5
+            val result = (1 * fitness1 + 2 * bigramFitness + 3 * trigramFitness + 4 * quadgramFitness + 5 * quintgramFitness) / 15
 
-//            val result = trigramFitness
+//            val result = fitness1
 
             fitnessCache[indiv.getChromosomeString()] = result
 

@@ -9,10 +9,10 @@ fun main() {
     Test(
         GA(
             encryptedString = ex4str,
-            popSize = 1000,
-            origMutationRate = 0.3,
+            popSize = 600,
+            origMutationRate = 0.1,
             crossOverRate = 0.9,
-            bestSelectRatio = 0.1,
+            bestSelectRatio = 0.01,
             maxGen = 500,
             selectionSampleSize = 3,
             maxKeySize = 34,

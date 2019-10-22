@@ -93,7 +93,7 @@ fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> 
 
     for (i in crossoverPoint until chromosomeSize) {
         // swap chromosome vals at i
-        indiv1.chromosome[i] = indiv2.chromosome[i].also { indiv2.chromosome[i] = indiv1.chromosome[i] }
+        child1.chromosome[i] = child2.chromosome[i].also { child2.chromosome[i] = child1.chromosome[i] }
     }
 
     result.add(child1)
@@ -107,16 +107,16 @@ fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> 
 fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
 
     val chromosomeSize = indiv1.chromosomeSize()
-    val crossoverPoint = (0..indiv1.chromosomeSize()).random()
 
     val child1 = Individual(indiv1.getChromosomeString())
     val child2 = Individual(indiv2.getChromosomeString())
 
     val result = ArrayList<Individual>(2)
 
-    for (i in crossoverPoint until chromosomeSize) {
-        // swap chromosome vals at i
-        indiv1.chromosome[i] = indiv2.chromosome[i].also { indiv2.chromosome[i] = indiv1.chromosome[i] }
+    for (i in 0 until chromosomeSize) {
+        // 50 % change of gene coming from either individual.
+        child1.chromosome[i] = if ((1..2).random() == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
+        child2.chromosome[i] = if ((1..2).random() == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
     }
 
     result.add(child1)

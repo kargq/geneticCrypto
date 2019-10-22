@@ -1,3 +1,4 @@
+# Convert txt ngram files to json.
 import json
 
 folder = "assets/"

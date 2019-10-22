@@ -12,10 +12,11 @@ import onePointCrossover
 import scientifik.plotly.Plotly
 import scientifik.plotly.models.Trace
 import scientifik.plotly.server.serve
+import uniformCrossover
 import java.lang.Math.*
 
 fun testOnePointCrossover() {
-    onePointCrossover(Individual(5), Individual(5))
+//    onePointCrossover(Individual(5), Individual(5))
 
 }
 
@@ -78,7 +79,7 @@ fun plottingTest() {
 
 
     val server = Plotly.serve(serverMeta) {
-//        val x = (0..100).map { it.toDouble() / 100.0 }
+        //        val x = (0..100).map { it.toDouble() / 100.0 }
 //        val y = x.map { sin(2.0 * PI * it) }
 //
 //        val currPopulationTrace = Trace.build(x = x, y = y) { name = "sin" }
@@ -129,6 +130,20 @@ fun plottingTest() {
 
 
 fun main() {
+
+//    val ind1 = Individual(8)
+//    val ind2 = Individual(8)
+//    println("${ind1.getChromosomeString()}")
+//    println("${ind2.getChromosomeString()}")
+//    val cross = uniformCrossover(ind1, ind2)
+//    println("${cross[0].getChromosomeString()}")
+//    println("${cross[1].getChromosomeString()}")
+
+//    print(funcTest.fitness(ex1key, ex4str))
+////    print(funcTest.fitness(ex2key, ex2str))
+    println(funcTest.fitness(ex3key, ex3str))
+    println(funcTest.fitness(ex4key, ex4str))
+
 //    plottingTest()
 
 
@@ -140,10 +155,9 @@ fun main() {
 //    testTournamentSelection()
 
 
-
-
 //    testJson()
 }
+
 //
 fun testJson() {
     val hmap: HashMap<String, Double> = HashMap()
