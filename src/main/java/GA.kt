@@ -13,35 +13,34 @@ import kotlin.random.Random
 
 val TEST_DIR = "tests"
 
-class FitnessIndividual(chromosome: String, fitness: Double) : Individual(chromosome) {
-    var fitness: Double? = null
-}
-
 class GA(
+    // size of population
     val popSize: Int = 10000,
     val crossOverRate: Double = 0.8,
     val maxKeySize: Int = 8,
+    // maximum number of generations
     val maxGen: Int = 100,
+    // string to decrypt
     var encryptedString: String = "wyswfslnwzqwdwnvlesiayhidthqhgndwysnlzicjjpakadtveiitwrlhisktberwjtkmfdlkfgaemtjdctqfvabhehwdjeadkwkfkcdxcrxwwxeuvgowvbnwycowgfikvoxklrpfkgyawnrhftkhwrpwzcjksnszywyzkhdxcrxwslhrjiouwpilszagxasdghwlaocvkcpzwarwzcjgxtwhfdajstxqxbklstxreojveerkrbekeouwysafyichjilhgsxqxtkjanhwrbywlhpwkvaxmnsddsjlslghcopagnhrwdeluhtgjcqfvsxqkvakuitqtskxzagpfbusfddidioauaaffalgkiilfbswjehxjqahliqovcbkmcwhodnwksxreojvsdpskopagnhwysafyichdwczlcdpgcowwlpeffwlwacgjqewftxizqlawctvftimkirrwojqvevuvskxuobscstalyduvlpwftpgrzknwlpfv",
+    // sample size for tournament selection
     val selectionSampleSize: Int = 3,
+    // mutation rate
     val origMutationRate: Double = 0.3,
+    // Ratio of best individuals preserved after each generation.
     val bestSelectRatio: Double = 0.1,
+    // id for output files
     val testAppendId: Int = (0..999999).random(),
+    // output csv data
     val csvOutput: PrintStream = PrintStream(File("$TEST_DIR/fitness$testAppendId.test.csv")),
-    val graphOutFile: File = File("tests.json"),
     val toPlot: Boolean = true,
     val mutationType: Individual.MutationType = Individual.MutationType.SCRAMBLE,
-    val adaptiveMutationRate: Boolean = false,
-    val adaptiveMutationRateChange: Double = 0.05,
+    // output feed for generation
     val infoOutput: PrintStream = PrintStream(File("$TEST_DIR/info$testAppendId.test.txt")),
+    // type of crossover.
     val crossoverType: CrossoverType = CrossoverType.ONE_POINT
 ) {
-    // larger k is more pressure
     var population: MutableList<Individual> = ArrayList()
     var generationsData: HashMap<Int, List<Double>> = HashMap()
-
-    //    var generationsJsonArray = GenerationsJsonArray()
-
     var mutationRate = origMutationRate
     // plotting stuff
     var server: PlotlyServer? = null
@@ -63,12 +62,6 @@ class GA(
     val quadgramAnalyzer: FrequencyAnalyzer = QuadgramAnalyzer()
     val quintgramAnalyzer: FrequencyAnalyzer = QuintgramAnalyzer()
 
-    fun info(i: Any) {
-        infoOutput.println(i.toString())
-        println(i.toString())
-    }
-
-
     init {
         info(
             """
@@ -82,8 +75,6 @@ selectionSampleSize: $selectionSampleSize
 mutationRate: $mutationRate 
 mutationType: $mutationType
 bestSelectionRatio: $bestSelectRatio
-adaptiveMutationRate: $adaptiveMutationRate
-adaptiveMutationRateChange: $adaptiveMutationRateChange
 
         """.trimMargin()
         )
@@ -91,31 +82,14 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
         if (toPlot) startPlot()
     }
 
-    var currGen = 0
-
     fun getDecryptionKey(): List<String> {
         initializeRandomPopulation()
         for (gen in 1..maxGen) {
-            val prevBest: Double = fitness(population[0])
-            val prevWorst: Double = fitness(population[population.size - 1])
             info("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${minFitnessIndividual?.getChromosomeString()}")
             info("Population: ${populationString()}")
             evolve()
             writeGenerationData(gen, (0 until population.size).map { fitness(population[it]) }.toMutableList())
             updatePlot(gen)
-            if (adaptiveMutationRate) {
-                val newBest: Double = fitness(population[0])
-                val newWorst: Double = fitness(population[population.size - 1])
-                if (prevBest >= newBest && newWorst <= prevWorst) {
-//                    mutationRate += adaptiveMutationRateChange
-                    addRandomIndividualsToPopulation(popSize / 10)
-                    population.shuffle()
-                    truncatePopulationToMaxSize()
-                }
-                if (newWorst > prevWorst) {
-//                    mutationRate = origMutationRate
-                }
-            }
         }
 
         var minFound = 1000.0
@@ -123,15 +97,21 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
         for (indiv in population) {
             val indfit = fitness(indiv)
             if (indfit < minFound) {
+                minFound = indfit
                 minIndivList = HashSet()
                 minIndivList.add(indiv.getChromosomeString())
             } else if (indfit == minFound) {
                 minIndivList.add(indiv.getChromosomeString())
             }
         }
+
         closePlot()
         return minIndivList.toList()
-//        return minFitnessIndividual!!.getChromosomeString()
+    }
+
+    fun info(i: Any) {
+        infoOutput.println(i.toString())
+        println(i.toString())
     }
 
     fun sanitizeString(c: String): String {
@@ -146,10 +126,7 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
 
 
     fun initializeRandomPopulation() {
-        //        generate a random initial population, POP, of size popSize
-//        for (indiv in 0 until popSize) {
-//            population.add(Individual(maxKeySize))
-//        }
+        //  generate a random initial population, POP, of size popSize
         if (population.size < popSize) {
             addRandomIndividualsToPopulation(popSize - population.size)
         }
@@ -177,9 +154,8 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
             val quintgramFitness =
                 quintgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
 
-            val result = (1 * fitness1 + 2 * bigramFitness + 3 * trigramFitness + 4 * quadgramFitness + 5 * quintgramFitness) / 15
-
-//            val result = fitness1
+            val result =
+                (1 * fitness1 + 2 * bigramFitness + 3 * trigramFitness + 4 * quadgramFitness + 5 * quintgramFitness) / 15
 
             fitnessCache[indiv.getChromosomeString()] = result
 
@@ -241,28 +217,10 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
             }
         }
 
-
-//        genMeanPlot = Plotly.plot2D {
-//            trace(genMeanTrace!!)
-//            layout {
-//                title = "Minimum fitness for each generation"
-//                xaxis {
-//                    title = "Generation"
-//                }
-//                yaxis {
-//                    title = "Mean fitness"
-//                }
-//            }
-//        }
-
-
         server = Plotly.serve(serverMeta) {}
 
         server!!.plot(populationFitnessPlot!!)
         server!!.plot(genMeanPlot!!)
-
-
-//        readLine()
     }
 
     val meanYList = (0..maxGen).map { 0.0 }.toDoubleArray()
@@ -286,7 +244,7 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
 
     fun closePlot() {
         if (toPlot) {
-            genMeanPlot!!.makeFile(File("tests/plot$testAppendId"))
+            genMeanPlot!!.makeFile(File("tests/plot$testAppendId.html"), show = true)
             server!!.stop()
         }
     }
@@ -370,12 +328,6 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
     // Pick k members at random then select the best of these ( k = 1, 2 ,.., 5)
     // Repeat to select more individuals (until population size is reached)
 
-    // Whether contestants are picked with replacement
-    // Picking without replacement increases selection pressure
-    // I will pick without replacement.
-
-
-    // Whether fittest contestant always wins (deterministic) or this happens with probability p
     fun tournamentSelection(fromPopulation: List<Individual>): List<Individual> {
 
         val new_population: MutableList<Individual> = ArrayList()
@@ -417,7 +369,6 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
         return theChosenOne!!
     }
 
-
     fun pickRandomSampleFromPopulation(): List<Individual> {
         val result = ArrayList<Individual>()
         for (i in 0 until selectionSampleSize) {
@@ -429,9 +380,7 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
         return result
     }
 
-
     fun populationString(printHowMany: Int = Math.min(population.size, 10)): String {
-        var result = ""
         val resultList = ArrayList<String>()
         val used: HashMap<Int, Boolean> = HashMap()
 
@@ -447,7 +396,6 @@ adaptiveMutationRateChange: $adaptiveMutationRateChange
     }
 
 }
-
 
 fun main() {
     val main = GA()

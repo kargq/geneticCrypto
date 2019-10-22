@@ -14,7 +14,6 @@ open class Individual {
         chromosome = CharArray(chromosomeSize)
         for (i in 0 until chromosomeSize) {
             chromosome[i] = getRandomAllowedChar()
-//            chromosome[i] = ((97..122) + 45).random().toChar()
         }
     }
 
@@ -82,7 +81,6 @@ open class Individual {
 }
 
 fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
-
     val chromosomeSize = indiv1.chromosomeSize()
     val crossoverPoint = (0..indiv1.chromosomeSize()).random()
 
@@ -100,12 +98,10 @@ fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> 
     result.add(child2)
 
     return result
-
 }
 
 
 fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
-
     val chromosomeSize = indiv1.chromosomeSize()
 
     val child1 = Individual(indiv1.getChromosomeString())
@@ -123,7 +119,6 @@ fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
     result.add(child2)
 
     return result
-
 }
 
 enum class CrossoverType {
