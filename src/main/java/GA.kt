@@ -1,4 +1,5 @@
 import hep.dataforge.meta.buildMeta
+import kotlinx.html.currentTimeMillis
 import scientifik.plotly.Plot2D
 import scientifik.plotly.Plotly
 import scientifik.plotly.makeFile
@@ -26,8 +27,8 @@ class GA(
     val selectionSampleSize: Int = 3,
     // mutation rate
     val origMutationRate: Double = 0.3,
-    // Ratio of best individuals preserved after each generation.
-    val bestSelectRatio: Double = 0.1,
+    // Ratio of best individuals preserved after each generation. Elitism
+    val elitismRatio: Double = 0.0,
     // id for output files
     val testAppendId: Int = (0..999999).random(),
     // output csv data
@@ -37,7 +38,9 @@ class GA(
     // output feed for generation
     val infoOutput: PrintStream = PrintStream(File("$TEST_DIR/info$testAppendId.test.txt")),
     // type of crossover.
-    val crossoverType: CrossoverType = CrossoverType.ONE_POINT
+    val crossoverType: CrossoverType = CrossoverType.ONE_POINT,
+    val tournamentSelectionType: TournamentSelectionType = TournamentSelectionType.WEIGHTED,
+    val eliminateWorst: Boolean = false
 ) {
     var population: MutableList<Individual> = ArrayList()
     var generationsData: HashMap<Int, List<Double>> = HashMap()
@@ -52,10 +55,10 @@ class GA(
     var genMaxTrace: Trace? = null
     // eo plotting stuff
     var minFitness: Double = 1.0
-    var minFitnessIndividual: Individual? = null
+    // Should not ever get added to population using this reference. This is just for seeing the best found so far.
     val bestPreserveCount: Int
         get() {
-            return min(ceil(bestSelectRatio * popSize.toDouble()).toInt(), popSize)
+            return min(ceil(elitismRatio * popSize.toDouble()).toInt(), popSize)
         }
     val bigramAnalyzer: FrequencyAnalyzer = BigramAnalyzer()
     val trigramAnalyzer: FrequencyAnalyzer = TrigramAnalyzer()
@@ -74,23 +77,33 @@ maxGen: $maxGen
 selectionSampleSize: $selectionSampleSize 
 mutationRate: $mutationRate 
 mutationType: $mutationType
-bestSelectionRatio: $bestSelectRatio
+elitismRatio: $elitismRatio
+testAppendId: $testAppendId
+tournamentSelectionType: $tournamentSelectionType
+eliminateWorst: $eliminateWorst,
 
         """.trimMargin()
         )
+
+
         encryptedString = sanitizeString(encryptedString)
         if (toPlot) startPlot()
     }
 
     fun getDecryptionKey(): List<String> {
+        val startTime = currentTimeMillis()
         initializeRandomPopulation()
         for (gen in 1..maxGen) {
-            info("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${minFitnessIndividual?.getChromosomeString()}")
+            val genStartTime = currentTimeMillis()
+            info("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${if (minFitnessSet.isNotEmpty()) minFitnessSet.random() else "none"}")
             info("Population: ${populationString()}")
             evolve()
             writeGenerationData(gen, (0 until population.size).map { fitness(population[it]) }.toMutableList())
             updatePlot(gen)
+            info("Time taken for generation: ${currentTimeMillis() - genStartTime}")
+            info("Elapsed time: ${currentTimeMillis() - startTime}")
         }
+        info("Total elapsed time: ${currentTimeMillis() - startTime}")
 
         var minFound = 1000.0
         var minIndivList = HashSet<String>()
@@ -140,6 +153,7 @@ bestSelectionRatio: $bestSelectRatio
 
     // might be a good idea to cap the size of this HashMap
     val fitnessCache: HashMap<String, Double> = HashMap()
+    var minFitnessSet: MutableSet<String> = HashSet()
 
     fun fitness(indiv: Individual): Double {
         if (fitnessCache.containsKey(indiv.getChromosomeString())) {
@@ -153,16 +167,22 @@ bestSelectionRatio: $bestSelectRatio
                 quadgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
             val quintgramFitness =
                 quintgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
-
+//
             val result =
-                (1 * fitness1 + 2 * bigramFitness + 3 * trigramFitness + 4 * quadgramFitness + 5 * quintgramFitness) / 15
+                (fitness1 + bigramFitness + trigramFitness + quadgramFitness + quintgramFitness) / 5
+
+//            val result = (quintgramFitness + quadgramFitness) / 2
 
             fitnessCache[indiv.getChromosomeString()] = result
 
             if (result < minFitness) {
                 minFitness = result
-                minFitnessIndividual = indiv
+                minFitnessSet.clear()
+                minFitnessSet.add(indiv.getChromosomeString())
+            } else if (result == minFitness) {
+                minFitnessSet.add(indiv.getChromosomeString())
             }
+
             return result
         }
 
@@ -236,9 +256,9 @@ bestSelectionRatio: $bestSelectRatio
             meanYList[gen] = y.average()
             genMeanTrace!!.y = meanYList
             genMinTrace!!.y =
-                (0 until maxGen).map { if (generationsData.containsKey(it)) generationsData[it]!![0] else 0.0 }
+                (0 until maxGen).map { if (generationsData.containsKey(it)) generationsData[it]!!.min() else 0.0 }
             genMaxTrace!!.y =
-                (0 until maxGen).map { if (generationsData.containsKey(it)) generationsData[it]!![generationsData[it]!!.size - 1] else 0.0 }
+                (0 until maxGen).map { if (generationsData.containsKey(it)) generationsData[it]!!.max() else 0.0 }
         }
     }
 
@@ -304,7 +324,8 @@ bestSelectionRatio: $bestSelectRatio
 
         population.addAll(bestIndividualsToPreserve)
 
-        sortPopulationByFitness()
+        if (eliminateWorst) sortPopulationByFitness()
+        else population.shuffle()
 
         truncatePopulationToMaxSize()
     }
@@ -328,16 +349,28 @@ bestSelectionRatio: $bestSelectRatio
     // Pick k members at random then select the best of these ( k = 1, 2 ,.., 5)
     // Repeat to select more individuals (until population size is reached)
 
-    fun tournamentSelection(fromPopulation: List<Individual>): List<Individual> {
+    enum class TournamentSelectionType {
+        WEIGHTED, BEST
+    }
 
+    fun tournamentSelection(fromPopulation: List<Individual>): List<Individual> {
         val new_population: MutableList<Individual> = ArrayList()
         // empty fromPopulation and create new fromPopulation
         while (new_population.size < fromPopulation.size) {
             val sample = pickRandomSampleFromPopulation()
-            new_population.add(weightedSelectFromSample(sample))
+            when (tournamentSelectionType) {
+                TournamentSelectionType.WEIGHTED -> new_population.add(weightedSelectFromSample(sample))
+                TournamentSelectionType.BEST -> new_population.add(bestSelectFromSample(sample))
+            }
         }
 
         return new_population
+    }
+
+    fun bestSelectFromSample(sample: List<Individual>): Individual {
+        return sample.minBy {
+            fitness(it)
+        }!!
     }
 
     fun weightedSelectFromSample(sample: List<Individual>): Individual {
@@ -408,7 +441,7 @@ fun main() {
         "Fitness: ${funcTest.fitness(
             decryptionKey,
             main.encryptedString
-        )} Min fitness found: ${main.minFitness} for ${main.minFitnessIndividual?.getChromosomeString()}"
+        )} Min fitness found: ${main.minFitness} for ${if (main.minFitnessSet.isNotEmpty()) main.minFitnessSet.random() else "none"}"
     )
     println("Fitness: ${funcTest.fitness("drowssap", main.encryptedString)}")
 }

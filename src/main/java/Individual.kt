@@ -1,3 +1,5 @@
+import kotlin.random.Random
+
 open class Individual {
 
     var chromosome: CharArray
@@ -18,7 +20,9 @@ open class Individual {
     }
 
     fun getRandomAllowedChar(): Char {
-        return (('a'..'z') + '-').random()
+        val EMPTY_CHAR_PROBABILITY = 0.10
+        return if (Random.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) '-' else ('a'..'z').random()
+//        return (('a'..'z') + '-').random()
     }
 
     fun getChromosomeString(): String {

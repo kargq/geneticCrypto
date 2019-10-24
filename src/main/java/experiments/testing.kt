@@ -143,7 +143,6 @@ fun main() {
 ////    print(funcTest.fitness(ex2key, ex2str))
     println(funcTest.fitness(ex3key, ex3str))
     println(funcTest.fitness(ex4key, ex4str))
-
 //    plottingTest()
 
 

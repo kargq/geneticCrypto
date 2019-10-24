@@ -9,15 +9,15 @@ fun main() {
     Test(
         GA(
             encryptedString = ex4str,
-            popSize = 600,
-            origMutationRate = 0.1,
+            popSize = 1000,
+            origMutationRate = 0.8,
             crossOverRate = 0.9,
-            bestSelectRatio = 0.01,
-            maxGen = 500,
+            elitismRatio = 0.0,
+            maxGen = 200,
             selectionSampleSize = 3,
-            maxKeySize = 34,
-            mutationType = Individual.MutationType.SCRAMBLE_INSERTION,
-            adaptiveMutationRate = false
+            maxKeySize = 40,
+            mutationType = Individual.MutationType.INSERTION,
+            tournamentSelectionType = GA.TournamentSelectionType.BEST
         ),
         givenKey = ex4key
     )
