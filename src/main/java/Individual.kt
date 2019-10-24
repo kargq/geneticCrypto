@@ -1,3 +1,5 @@
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 open class Individual {
@@ -6,6 +8,16 @@ open class Individual {
 
     constructor(chromosome: CharArray) {
         this.chromosome = chromosome
+    }
+
+    constructor(minKeySize: Int, maxKeySize: Int) {
+        chromosome = CharArray(maxKeySize)
+        for (i in 0 until maxKeySize) {
+            chromosome[i] = getRandomNonEmptyAllowedChar()
+        }
+        for (i in 0 until maxKeySize - minKeySize) {
+            chromosome[(0 until maxKeySize).random()] = EMPTY_CHARACTER
+        }
     }
 
     constructor(chromosomeString: String) {
@@ -21,7 +33,12 @@ open class Individual {
 
     fun getRandomAllowedChar(): Char {
         val EMPTY_CHAR_PROBABILITY = 0.10
-        return if (Random.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) '-' else ('a'..'z').random()
+        return if (Random.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) EMPTY_CHARACTER else ('a'..'z').random()
+//        return (('a'..'z') + '-').random()
+    }
+
+    fun getRandomNonEmptyAllowedChar(): Char {
+        return ('a'..'z').random()
 //        return (('a'..'z') + '-').random()
     }
 
@@ -83,6 +100,8 @@ open class Individual {
     }
 
 }
+
+val EMPTY_CHARACTER: Char = '-'
 
 fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()

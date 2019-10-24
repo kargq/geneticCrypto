@@ -19,6 +19,7 @@ class GA(
     val popSize: Int = 10000,
     val crossOverRate: Double = 0.8,
     val maxKeySize: Int = 8,
+    val minKeySize: Int = 3,
     // maximum number of generations
     val maxGen: Int = 100,
     // string to decrypt
@@ -140,9 +141,19 @@ eliminateWorst: $eliminateWorst,
 
     fun initializeRandomPopulation() {
         //  generate a random initial population, POP, of size popSize
-        if (population.size < popSize) {
-            addRandomIndividualsToPopulation(popSize - population.size)
+//        if (population.size < popSize) {
+//            addRandomIndividualsToPopulation(popSize - population.size)
+//        }
+        val toFill = popSize - population.size
+        val graduations = maxKeySize - minKeySize
+        print("max $maxKeySize min $minKeySize grad $graduations")
+        for (keysize in minKeySize..maxKeySize) {
+            for (i in 0 until toFill / graduations) {
+                println("${i} until ${toFill/graduations} min $keysize max $maxKeySize")
+                population.add(Individual(keysize, maxKeySize))
+            }
         }
+        addRandomIndividualsToPopulation(popSize - population.size)
     }
 
     fun addRandomIndividualsToPopulation(numIndiv: Int) {

@@ -17,7 +17,8 @@ fun main() {
             popSize = 300,
             maxGen = 100,
             origMutationRate = 0.1,
-            crossOverRate = 0.8
+            crossOverRate = 0.8,
+            eliminateWorst = true
         ),
         givenKey = ex1key
     )
