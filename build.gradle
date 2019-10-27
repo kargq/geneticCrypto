@@ -24,6 +24,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.beust/klaxon
     compile group: 'com.beust', name: 'klaxon', version: '5.0.1'
     implementation("scientifik:plotlykt-server:0.1.2")
+    // Guava
+    compile 'com.google.guava:guava:28.1-jre'
 }
 
 compileKotlin {

@@ -131,19 +131,20 @@ fun plottingTest() {
 
 fun main() {
 
-//    val ind1 = Individual(8)
-//    val ind2 = Individual(8)
-//    println("${ind1.getChromosomeString()}")
-//    println("${ind2.getChromosomeString()}")
+    val ind1 = Individual(8)
+    val ind2 = Individual(8)
+    println("${ind1.getChromosomeString()}")
+    println("${ind2.getChromosomeString()}")
 //    val cross = uniformCrossover(ind1, ind2)
-//    println("${cross[0].getChromosomeString()}")
-//    println("${cross[1].getChromosomeString()}")
+    val cross = onePointCrossover(ind1, ind2)
+    println("${cross[0].getChromosomeString()}")
+    println("${cross[1].getChromosomeString()}")
 
 //    print(funcTest.fitness(ex1key, ex4str))
 ////    print(funcTest.fitness(ex2key, ex2str))
-    println(funcTest.fitness(ex3key, ex3str))
-    println(funcTest.fitness(ex4key, ex4str))
-//    plottingTest()
+//    println(funcTest.fitness(ex3key, ex3str))
+//    println(funcTest.fitness(ex4key, ex4str))
+//    plottingTest()f
 
 
 //    experiments.testMutation()

@@ -1,0 +1,33 @@
+2
+popSize 300
+crossOverRate 0.8
+maxKeySize 8
+minKeySize 3
+maxGen 100
+encryptedString xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwnochsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdwpcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxclwzocdctmjebx
+selectionSampleSize 3
+origMutationRate 0.1
+elitismRatio 0.0
+testAppendId 0
+toPlot true
+mutationType SCRAMBLE
+crossoverType ONE_POINT,
+tournamentSelectionType WEIGHTED
+eliminateWorst true
+end
+popSize 300
+crossOverRate 0.8
+maxKeySize 8
+minKeySize 3
+maxGen 100
+encryptedString xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwnochsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdwpcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxclwzocdctmjebx
+selectionSampleSize 3
+origMutationRate 0.1
+elitismRatio 0.0
+testAppendId 0
+toPlot true
+mutationType SCRAMBLE
+crossoverType ONE_POINT,
+tournamentSelectionType WEIGHTED
+eliminateWorst true
+end

@@ -1,4 +1,5 @@
 import hep.dataforge.meta.buildMeta
+import io.ktor.util.Hash
 import kotlinx.html.currentTimeMillis
 import scientifik.plotly.Plot2D
 import scientifik.plotly.Plotly
@@ -6,8 +7,17 @@ import scientifik.plotly.makeFile
 import scientifik.plotly.models.Trace
 import scientifik.plotly.server.PlotlyServer
 import scientifik.plotly.server.serve
+import sun.misc.LRUCache
 import java.io.*
+import java.util.*
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashMap
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.random.Random
@@ -29,6 +39,7 @@ class GA(
     // mutation rate
     val origMutationRate: Double = 0.3,
     // Ratio of best individuals preserved after each generation. Elitism
+    // Only really works when eliminatingWorst
     val elitismRatio: Double = 0.0,
     // id for output files
     val testAppendId: Int = (0..999999).random(),
@@ -106,21 +117,8 @@ eliminateWorst: $eliminateWorst,
         }
         info("Total elapsed time: ${currentTimeMillis() - startTime}")
 
-        var minFound = 1000.0
-        var minIndivList = HashSet<String>()
-        for (indiv in population) {
-            val indfit = fitness(indiv)
-            if (indfit < minFound) {
-                minFound = indfit
-                minIndivList = HashSet()
-                minIndivList.add(indiv.getChromosomeString())
-            } else if (indfit == minFound) {
-                minIndivList.add(indiv.getChromosomeString())
-            }
-        }
-
         closePlot()
-        return minIndivList.toList()
+        return minFitnessSet.toList()
     }
 
     fun info(i: Any) {
@@ -141,19 +139,9 @@ eliminateWorst: $eliminateWorst,
 
     fun initializeRandomPopulation() {
         //  generate a random initial population, POP, of size popSize
-//        if (population.size < popSize) {
-//            addRandomIndividualsToPopulation(popSize - population.size)
-//        }
-        val toFill = popSize - population.size
-        val graduations = maxKeySize - minKeySize
-        print("max $maxKeySize min $minKeySize grad $graduations")
-        for (keysize in minKeySize..maxKeySize) {
-            for (i in 0 until toFill / graduations) {
-                println("${i} until ${toFill/graduations} min $keysize max $maxKeySize")
-                population.add(Individual(keysize, maxKeySize))
-            }
+        if (population.size < popSize) {
+            addRandomIndividualsToPopulation(popSize - population.size)
         }
-        addRandomIndividualsToPopulation(popSize - population.size)
     }
 
     fun addRandomIndividualsToPopulation(numIndiv: Int) {
@@ -162,15 +150,14 @@ eliminateWorst: $eliminateWorst,
         }
     }
 
-    // might be a good idea to cap the size of this HashMap
-    val fitnessCache: HashMap<String, Double> = HashMap()
+    // capped size HashMap
+    val fitnessCache: MutableMap<String, Double> = Collections.synchronizedMap(CacheMap(popSize * 4))
     var minFitnessSet: MutableSet<String> = HashSet()
 
     fun fitness(indiv: Individual): Double {
         if (fitnessCache.containsKey(indiv.getChromosomeString())) {
             return fitnessCache[indiv.getChromosomeString()]!!
         } else {
-
             val fitness1 = funcTest.fitness(indiv.getChromosomeString(), encryptedString)
             val bigramFitness = bigramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
             val trigramFitness = trigramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
@@ -189,9 +176,9 @@ eliminateWorst: $eliminateWorst,
             if (result < minFitness) {
                 minFitness = result
                 minFitnessSet.clear()
-                minFitnessSet.add(indiv.getChromosomeString())
+                minFitnessSet.add(sanitizeString(indiv.getChromosomeString()))
             } else if (result == minFitness) {
-                minFitnessSet.add(indiv.getChromosomeString())
+                minFitnessSet.add(sanitizeString(indiv.getChromosomeString()))
             }
 
             return result
@@ -288,7 +275,6 @@ eliminateWorst: $eliminateWorst,
 
     }
 
-
     fun evolve() {
 
         val bestIndividualsToPreserve = ArrayList<Individual>()
@@ -365,17 +351,18 @@ eliminateWorst: $eliminateWorst,
     }
 
     fun tournamentSelection(fromPopulation: List<Individual>): List<Individual> {
-        val new_population: MutableList<Individual> = ArrayList()
-        // empty fromPopulation and create new fromPopulation
-        while (new_population.size < fromPopulation.size) {
+        val newPopulation: MutableList<Individual> = Collections.synchronizedList(ArrayList())
+        for (i in fromPopulation.indices) {
             val sample = pickRandomSampleFromPopulation()
-            when (tournamentSelectionType) {
-                TournamentSelectionType.WEIGHTED -> new_population.add(weightedSelectFromSample(sample))
-                TournamentSelectionType.BEST -> new_population.add(bestSelectFromSample(sample))
-            }
+                newPopulation.add(
+                    when (tournamentSelectionType) {
+                        TournamentSelectionType.WEIGHTED -> weightedSelectFromSample(sample)
+                        TournamentSelectionType.BEST -> bestSelectFromSample(sample)
+                    }
+                )
         }
 
-        return new_population
+        return newPopulation
     }
 
     fun bestSelectFromSample(sample: List<Individual>): Individual {

@@ -9,7 +9,7 @@ fun main() {
     Test(
         GA(
             encryptedString = ex3str,
-            popSize = 3000,
+            popSize = 1000,
             maxKeySize = 26,
             origMutationRate = 0.2,
             crossOverRate = 0.9,
@@ -17,7 +17,7 @@ fun main() {
             maxGen = 300,
             eliminateWorst = true,
             mutationType = Individual.MutationType.SCRAMBLE_INSERTION,
-            tournamentSelectionType = GA.TournamentSelectionType.BEST
+            tournamentSelectionType = GA.TournamentSelectionType.WEIGHTED
         ), givenKey = ex3key
     )
 

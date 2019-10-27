@@ -3,7 +3,7 @@ package experiments
 import GA
 import funcTest
 
-val ex1str = "xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwno chsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdw pcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxc lwzocdctmjebx"
+val ex1str = "xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwnochsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdwpcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxclwzocdctmjebx"
 val ex1key = "password"
 
 fun main() {
@@ -23,7 +23,6 @@ fun main() {
         givenKey = ex1key
     )
     // found pnjx-roh with fitness 0.21
-    readLine()
 }
 
 
