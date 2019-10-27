@@ -42,7 +42,7 @@ class GA(
     // Only really works when eliminatingWorst
     val elitismRatio: Double = 0.0,
     // id for output files
-    val testAppendId: Int = (0..999999).random(),
+    val testAppendId: String = (0..999999).random().toString(),
     // output csv data
     val csvOutput: PrintStream = PrintStream(File("$TEST_DIR/fitness$testAppendId.test.csv")),
     val toPlot: Boolean = true,

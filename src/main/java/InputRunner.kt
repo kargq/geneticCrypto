@@ -2,7 +2,7 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.util.*
 
-class Main(input: InputStream) {
+class InputRunner(input: InputStream, appendMore: String = "") {
     init {
         val scn: Scanner = Scanner(input)
 
@@ -27,7 +27,7 @@ class Main(input: InputStream) {
             scn.next()
             val elitismRatio: Double = scn.nextDouble()
             scn.next()
-            val testAppendId: Int = scn.nextInt()
+            val testAppendId: String = scn.next() + appendMore
             scn.next()
             val toPlot: Boolean = scn.nextBoolean()
             scn.next()
@@ -82,5 +82,5 @@ class Main(input: InputStream) {
 }
 
 fun main() {
-    Main(FileInputStream("input.txt"))
+    InputRunner(FileInputStream("input.txt"))
 }
