@@ -11,10 +11,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m000_t1_mts_cto
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType ONE_POINT,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 1.0
@@ -28,10 +28,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m010_t1_mts_cto
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType ONE_POINT,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 0.9
@@ -45,10 +45,10 @@ elitismRatio 0.0
 elitism true
 testAppendId e4_c090_m000_t1_mts_cto
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType ONE_POINT,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 0.9
@@ -62,10 +62,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c090_m010_t1_mts_cto
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType ONE_POINT,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 1.0
@@ -79,10 +79,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m000_t1_mts_ctu
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType UNIFORM,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 1.0
@@ -96,10 +96,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m010_t1_mts_ctu
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType UNIFORM,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 0.9
@@ -113,10 +113,10 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m010_t1_mts_ctu
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType UNIFORM,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
 popSize 1000
 crossOverRate 0.9
@@ -130,8 +130,8 @@ elitismRatio 0.001
 elitism true
 testAppendId e4_c100_m010_t1_mts_cto
 toPlot true
-mutationType SCRAMBLE_INSERTION
+mutationType INSERTION
 crossoverType UNIFORM,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+tournamentSelectionType BEST
+eliminateWorst false
 end
