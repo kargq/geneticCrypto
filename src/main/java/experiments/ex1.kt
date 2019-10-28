@@ -14,11 +14,13 @@ fun main() {
         GA(
             encryptedString = ex1str,
             maxKeySize = 8,
-            popSize = 300,
-            maxGen = 100,
+            popSize = 600,
+            maxGen = 300,
             origMutationRate = 0.1,
             crossOverRate = 0.8,
-            eliminateWorst = true
+            eliminateWorst = true,
+            elitism = true,
+            mutationType = Individual.MutationType.SCRAMBLE_INSERTION
         ),
         givenKey = ex1key
     )

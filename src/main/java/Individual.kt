@@ -4,6 +4,10 @@ val EMPTY_CHARACTER: Char = '-'
 val EMPTY_CHAR_PROBABILITY: Double = 0.10
 
 class Individual {
+    
+//    private val rg: Random = Random(Seed.getInstance())
+    
+    
     enum class MutationType {
         SCRAMBLE, INSERTION, SCRAMBLE_INSERTION
     }
@@ -100,7 +104,7 @@ class Individual {
 
 fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()
-    val crossoverPoint = (0..indiv1.chromosomeSize()).random()
+    val crossoverPoint = (0..indiv1.chromosomeSize()).random(Random(Seed.getInstance()))
 
     val child1 = Individual(indiv1.getChromosomeString())
     val child2 = Individual(indiv2.getChromosomeString())
@@ -129,8 +133,8 @@ fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
 
     for (i in 0 until chromosomeSize) {
         // 50 % change of gene coming from either individual.
-        child1.chromosome[i] = if ((1..2).random() == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
-        child2.chromosome[i] = if ((1..2).random() == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
+        child1.chromosome[i] = if ((1..2).random(Random(Seed.getInstance())) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
+        child2.chromosome[i] = if ((1..2).random(Random(Seed.getInstance())) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
     }
 
     result.add(child1)

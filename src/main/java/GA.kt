@@ -18,12 +18,11 @@ import kotlin.random.Random
 val TEST_DIR = "tests"
 
 class GA(
+//    val randomNumberSeed: Int = (0..Integer.MAX_VALUE).random(),
     // size of population
     val popSize: Int = 10000,
     val crossOverRate: Double = 0.8,
     val maxKeySize: Int = 8,
-    // never used. TODO: remove
-    val minKeySize: Int = 3,
     // maximum number of generations
     val maxGen: Int = 100,
     // string to decrypt
@@ -49,6 +48,7 @@ class GA(
     val tournamentSelectionType: TournamentSelectionType = TournamentSelectionType.WEIGHTED,
     val eliminateWorst: Boolean = false
 ) {
+//    private lateinit var rg: Random
     private var population: MutableList<Individual> = ArrayList()
     private var generationsData: HashMap<Int, List<Double>> = HashMap()
     private var mutationRate = origMutationRate
@@ -80,6 +80,8 @@ class GA(
 
 
     init {
+//        Seed.createInstance(randomNumberSeed)
+//        rg = Random(Seed.getInstance())
         info(
             """
 Parameters: 
@@ -187,7 +189,7 @@ eliminateWorst: $eliminateWorst,
 
         // elitism
         if (elitism) {
-            population[(0 until population.size).random()] = minFitnessIndividual
+            population[0] = minFitnessIndividual
         }
 
         population = tournamentSelection().toMutableList()
@@ -443,20 +445,3 @@ eliminateWorst: $eliminateWorst,
 enum class CrossoverType {
     ONE_POINT, UNIFORM
 }
-
-fun main() {
-    val main = GA()
-    println(main.populationString())
-    val decryptionKeys = main.getDecryptionKey()
-    println(decryptionKeys)
-    val decryptionKey = decryptionKeys[0]
-    println(funcTest.decrypt(decryptionKey, main.encryptedString))
-    println(
-        "Fitness: ${funcTest.fitness(
-            decryptionKey,
-            main.encryptedString
-        )} Min fitness found: ${main.minFitness} for ${if (main.minFitnessSet.isNotEmpty()) main.minFitnessSet.random() else "none"}"
-    )
-    println("Fitness: ${funcTest.fitness("drowssap", main.encryptedString)}")
-}
-

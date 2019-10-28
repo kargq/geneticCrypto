@@ -13,7 +13,8 @@ fun main() {
             crossOverRate = 0.8,
             toPlot = true,
             eliminateWorst = false,
-            tournamentSelectionType = GA.TournamentSelectionType.WEIGHTED
+            tournamentSelectionType = GA.TournamentSelectionType.WEIGHTED,
+            elitism = true
         ),
         givenKey = "drowssap"
     )

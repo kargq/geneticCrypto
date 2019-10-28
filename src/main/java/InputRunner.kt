@@ -58,7 +58,6 @@ class InputRunner(input: InputStream, appendMore: String = "") {
                 popSize = popSize,
                 crossOverRate = crossOverRate,
                 maxKeySize = maxKeySize,
-                minKeySize = minKeySize,
                 maxGen = maxGen,
                 encryptedString = encryptedString,
                 selectionSampleSize = selectionSampleSize,
