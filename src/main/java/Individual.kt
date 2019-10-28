@@ -1,6 +1,12 @@
 import kotlin.random.Random
 
-open class Individual {
+val EMPTY_CHARACTER: Char = '-'
+val EMPTY_CHAR_PROBABILITY: Double = 0.10
+
+class Individual {
+    enum class MutationType {
+        SCRAMBLE, INSERTION, SCRAMBLE_INSERTION
+    }
 
     var chromosome: CharArray
 
@@ -29,15 +35,12 @@ open class Individual {
         }
     }
 
-    fun getRandomAllowedChar(): Char {
-        val EMPTY_CHAR_PROBABILITY = 0.10
+    private fun getRandomAllowedChar(): Char {
         return if (Random.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) EMPTY_CHARACTER else ('a'..'z').random()
-//        return (('a'..'z') + '-').random()
     }
 
-    fun getRandomNonEmptyAllowedChar(): Char {
+    private fun getRandomNonEmptyAllowedChar(): Char {
         return ('a'..'z').random()
-//        return (('a'..'z') + '-').random()
     }
 
     fun getChromosomeString(): String {
@@ -46,10 +49,6 @@ open class Individual {
 
     fun chromosomeSize(): Int {
         return chromosome.size
-    }
-
-    enum class MutationType {
-        SCRAMBLE, INSERTION, SCRAMBLE_INSERTION
     }
 
     fun mutate(type: MutationType) {
@@ -99,8 +98,6 @@ open class Individual {
 
 }
 
-val EMPTY_CHARACTER: Char = '-'
-
 fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()
     val crossoverPoint = (0..indiv1.chromosomeSize()).random()
@@ -140,8 +137,4 @@ fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
     result.add(child2)
 
     return result
-}
-
-enum class CrossoverType {
-    ONE_POINT, UNIFORM
 }

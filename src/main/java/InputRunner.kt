@@ -27,6 +27,8 @@ class InputRunner(input: InputStream, appendMore: String = "") {
             scn.next()
             val elitismRatio: Double = scn.nextDouble()
             scn.next()
+            val elitism: Boolean = scn.nextBoolean()
+            scn.next()
             val testAppendId: String = scn.next() + appendMore
             scn.next()
             val toPlot: Boolean = scn.nextBoolean()
@@ -62,6 +64,7 @@ class InputRunner(input: InputStream, appendMore: String = "") {
                 selectionSampleSize = selectionSampleSize,
                 origMutationRate = origMutationRate,
                 elitismRatio = elitismRatio,
+                elitism = elitism,
                 testAppendId = testAppendId,
                 toPlot = toPlot,
                 mutationType = mutationType,

@@ -2,9 +2,6 @@ import com.beust.klaxon.Klaxon
 import java.io.File
 import kotlin.math.abs
 
-interface FrequencyAnalyzer {
-    fun analyse(text: String): Double
-}
 
 val ASSETS_PATH = "assets/"
 val BIGRAM_FILE = "english_bigrams_frequency.json"
@@ -13,9 +10,13 @@ val QUADGRAM_FILE = "english_quadgrams_frequency.json"
 val QUINTGRAM_FILE = "english_quintgrams_frequency.json"
 val WORDS_FILE = "english_words_frequency.json"
 
+interface FrequencyAnalyzer {
+    fun analyse(text: String): Double
+}
+
 class BigramAnalyzer : FrequencyAnalyzer {
-    val bigramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$BIGRAM_FILE"))!!
-    val size = 2
+    private val bigramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$BIGRAM_FILE"))!!
+    private val size = 2
 
     override fun analyse(text: String): Double {
         return analyzeFrequencies(text, size, bigramMap)
@@ -24,8 +25,8 @@ class BigramAnalyzer : FrequencyAnalyzer {
 }
 
 class TrigramAnalyzer : FrequencyAnalyzer {
-    val trigramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$TRIGRAM_FILE"))!!
-    val size = 3
+    private val trigramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$TRIGRAM_FILE"))!!
+    private val size = 3
 
     override fun analyse(text: String): Double {
         return analyzeFrequencies(text, size, trigramMap)
@@ -33,8 +34,8 @@ class TrigramAnalyzer : FrequencyAnalyzer {
 }
 
 class QuadgramAnalyzer : FrequencyAnalyzer {
-    val quadgramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$QUADGRAM_FILE"))!!
-    val size = 4
+    private val quadgramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$QUADGRAM_FILE"))!!
+    private val size = 4
 
     override fun analyse(text: String): Double {
         return analyzeFrequencies(text, size, quadgramMap)
@@ -42,8 +43,8 @@ class QuadgramAnalyzer : FrequencyAnalyzer {
 }
 
 class QuintgramAnalyzer : FrequencyAnalyzer {
-    val quintgramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$QUINTGRAM_FILE"))!!
-    val size = 5
+    private val quintgramMap: Map<String, Double> = Klaxon().parse(File("$ASSETS_PATH$QUINTGRAM_FILE"))!!
+    private val size = 5
 
     override fun analyse(text: String): Double {
         return analyzeFrequencies(text, size, quintgramMap)
@@ -69,14 +70,13 @@ fun analyzeFrequencies(text: String, size: Int, nGramMap: Map<String, Double>): 
     var score = 0.0
 
     for (expectedKey in nGramMap.keys) {
-        val expectedFrequency:Double = nGramMap[expectedKey]!!
-        val foundFrequency:Double = foundMap.getOrDefault(expectedKey, 0.0) / totalOccr
+        val expectedFrequency: Double = nGramMap[expectedKey]!!
+        val foundFrequency: Double = foundMap.getOrDefault(expectedKey, 0.0) / totalOccr
         val diff = abs(expectedFrequency - foundFrequency)
         score += diff
     }
 
     return score
-
 }
 
 fun sanitizeText(text: String): String {
