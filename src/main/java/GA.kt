@@ -63,7 +63,7 @@ class GA(
     private val quadgramAnalyzer: FrequencyAnalyzer = QuadgramAnalyzer()
     private val quintgramAnalyzer: FrequencyAnalyzer = QuintgramAnalyzer()
     // capped size HashMap
-    private val fitnessCache: MutableMap<String, Double> = CacheMap(popSize * 5)
+    private val fitnessCache: LRUCacheMap<String, Double> = LRUCacheMap(popSize * 5)
     var minFitnessSet: MutableSet<String> = HashSet()
     private var minFitnessIndividual: Individual = Individual(maxKeySize)
 
@@ -137,31 +137,31 @@ eliminateWorst: $eliminateWorst,
     }
 
     fun fitness(indiv: Individual): Double {
-        if (fitnessCache.containsKey(indiv.getChromosomeString())) {
-            return fitnessCache[indiv.getChromosomeString()]!!
+        val fitnessKey = sanitizeString(indiv.getChromosomeString())
+        if (fitnessCache.containsKey(fitnessKey)) {
+            return fitnessCache[fitnessKey]!!
         } else {
-            val fitness1 = funcTest.fitness(indiv.getChromosomeString(), encryptedString)
-            val bigramFitness = bigramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
-            val trigramFitness = trigramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
+            val fitness1 = funcTest.fitness(fitnessKey, encryptedString)
+            val bigramFitness = bigramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
+            val trigramFitness = trigramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
             val quadgramFitness =
-                quadgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
+                quadgramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
             val quintgramFitness =
-                quintgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
+                quintgramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
 
             val result =
                 (fitness1 + bigramFitness + trigramFitness + quadgramFitness + quintgramFitness) / 5
 
-            fitnessCache[indiv.getChromosomeString()] = result
+            fitnessCache[fitnessKey] = result
 
             if (result < minFitness) {
                 minFitness = result
                 minFitnessSet.clear()
-                minFitnessSet.add(sanitizeString(indiv.getChromosomeString()))
+                minFitnessSet.add(fitnessKey)
                 minFitnessIndividual = indiv
             } else if (result == minFitness) {
-                minFitnessSet.add(sanitizeString(indiv.getChromosomeString()))
+                minFitnessSet.add(fitnessKey)
             }
-
             return result
         }
 
@@ -173,13 +173,10 @@ eliminateWorst: $eliminateWorst,
             CrossoverType.ONE_POINT -> onePointCrossover(indiv1, indiv2)
             CrossoverType.UNIFORM -> uniformCrossover(indiv1, indiv2)
         }
-
     }
 
 
     private fun evolve() {
-
-
         val bestIndividualsToPreserve = ArrayList<Individual>()
 
         if (eliminateWorst) {
