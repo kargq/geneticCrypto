@@ -4,6 +4,7 @@ import GA
 import Individual
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.Klaxon
+import funcTest
 import hep.dataforge.meta.buildMeta
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -131,14 +132,25 @@ fun plottingTest() {
 
 fun main() {
 
-    val ind1 = Individual(8)
-    val ind2 = Individual(8)
-    println("${ind1.getChromosomeString()}")
-    println("${ind2.getChromosomeString()}")
+//    val ind1 = Individual(8)
+//    val ind2 = Individual(8)
+//    println("${ind1.getChromosomeString()}")
+//    println("${ind2.getChromosomeString()}")
 //    val cross = uniformCrossover(ind1, ind2)
-    val cross = onePointCrossover(ind1, ind2)
-    println("${cross[0].getChromosomeString()}")
-    println("${cross[1].getChromosomeString()}")
+//    val cross = onePointCrossover(ind1, ind2)
+//    println("${cross[0].getChromosomeString()}")
+//    println("${cross[1].getChromosomeString()}")
+
+    println(
+        funcTest.decrypt(
+            "supercalifragilisticexpialidocious",
+            ex4str
+        )
+    )
+//    println(functionsWindows.decrypt("supercalifragilisticexpialidocious", ex4str))
+//    println()
+//    println(functionsWindows.fitness("ocioussupercalifragilisticexpialid", ex4str))
+//    println(functionsWindows.decrypt("ocioussupercalifragilisticexpialid", ex4str))
 
 //    print(funcTest.fitness(ex1key, ex4str))
 ////    print(funcTest.fitness(ex2key, ex2str))

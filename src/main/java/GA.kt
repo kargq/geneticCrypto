@@ -47,7 +47,12 @@ class GA(
     // type of crossover.
     val crossoverType: CrossoverType = CrossoverType.ONE_POINT,
     val tournamentSelectionType: TournamentSelectionType = TournamentSelectionType.WEIGHTED,
-    val eliminateWorst: Boolean = false
+    val eliminateWorst: Boolean = false,
+    val monogram: Boolean = true,
+    val bigram: Boolean = true,
+    val trigram: Boolean = true,
+    val quadgram: Boolean = true,
+    val quintgram: Boolean = true
 ) {
     private var population: MutableList<Individual> = ArrayList()
     private var generationsData: HashMap<Int, List<Double>> = HashMap()
@@ -148,8 +153,31 @@ eliminateWorst: $eliminateWorst,
             val quintgramFitness =
                 quintgramAnalyzer.analyse(funcTest.decrypt(indiv.getChromosomeString(), encryptedString))
 
-            val result =
-                (fitness1 + bigramFitness + trigramFitness + quadgramFitness + quintgramFitness) / 5
+            var num = 0.0
+            var den = 0.0
+
+            if (monogram) {
+                num += fitness1
+                den++
+            }
+            if (bigram) {
+                num += bigramFitness
+                den++
+            }
+            if (trigram) {
+                num += trigramFitness
+                den++
+            }
+            if (quadgram) {
+                num += quadgramFitness
+                den++
+            }
+            if (quintgram) {
+                num += quintgramFitness
+                den++
+            }
+
+            val result = num / den;
 
             fitnessCache[indiv.getChromosomeString()] = result
 
