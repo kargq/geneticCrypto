@@ -52,7 +52,7 @@ class QuintgramAnalyzer : FrequencyAnalyzer {
 }
 
 
-fun analyzeFrequencies(text: String, size: Int, nGramMap: Map<String, Double>): Double {
+fun analyzeFrequencies(text: String, size: Int, expectedFrequencies: Map<String, Double>): Double {
     val stext = sanitizeText(text)
     val foundMap = HashMap<String, Double>()
     val totalOccr = stext.length - (size - 1)
@@ -67,13 +67,21 @@ fun analyzeFrequencies(text: String, size: Int, nGramMap: Map<String, Double>): 
     }
 
     //Calculate the total difference between the expected frequencies and the actual frequencies
-    var score = 0.0
+    var score = 1.0
 
-    for (expectedKey in nGramMap.keys) {
-        val expectedFrequency: Double = nGramMap[expectedKey]!!
-        val foundFrequency: Double = foundMap.getOrDefault(expectedKey, 0.0) / totalOccr
-        val diff = abs(expectedFrequency - foundFrequency)
-        score += diff
+//    for (expectedKey in expectedFrequencies.keys) {
+//        val expectedFrequency: Double = expectedFrequencies[expectedKey]!!
+//        val foundFrequency: Double = foundMap.getOrDefault(expectedKey, 0.0) / totalOccr
+//        val diff = abs(expectedFrequency - foundFrequency)
+//        score += diff
+//    }
+    for (foundKey in foundMap.keys) {
+        if (expectedFrequencies.containsKey(foundKey)) {
+            val foundFrequency = foundMap[foundKey]!!
+            val expectedFrequency = expectedFrequencies[foundKey]!!
+            val diff = abs(expectedFrequency - foundFrequency)
+            score -= diff
+        }
     }
 
     return score
