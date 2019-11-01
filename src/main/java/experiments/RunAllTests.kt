@@ -59,7 +59,7 @@ fun main() {
                                     quintgram = !original,
                                     tournamentSelectionType = tournamentSelectionType
                                 ).getDecryptionKey()
-                            })
+                            }).start()
                             Thread(Runnable {
                                 GA(
                                     encryptedString = ex3str,
@@ -79,7 +79,7 @@ fun main() {
                                     quintgram = !original,
                                     tournamentSelectionType = tournamentSelectionType
                                 ).getDecryptionKey()
-                            })
+                            }).start()
                             Thread(Runnable {
                                 GA(
                                     encryptedString = ex4str,
@@ -99,7 +99,7 @@ fun main() {
                                     quintgram = !original,
                                     tournamentSelectionType = tournamentSelectionType
                                 ).getDecryptionKey()
-                            })
+                            }).start()
                         }
                     }
                 }
@@ -107,83 +107,3 @@ fun main() {
         }
     }
 }
-
-/*
-
-                    Thread(Runnable {
-                        GA(
-                            encryptedString = ex1str,
-                            popSize = 1000,
-                            origMutationRate = 0.8,
-                            crossOverRate = 0.9,
-                            elitismRatio = 0.0,
-                            maxGen = 200,
-                            selectionSampleSize = 3,
-                            maxKeySize = 40,
-                            mutationType = Individual.MutationType.INSERTION,
-                            tournamentSelectionType = GA.TournamentSelectionType.BEST,
-                            monogram = true,
-                            bigram = true,
-                            trigram = true,
-                            quadgram = true,
-                            quintgram = true
-                        )
-                    }).start()
-                    Thread(Runnable {
-                        GA(
-                            encryptedString = ex2str,
-                            popSize = 1000,
-                            origMutationRate = 0.8,
-                            crossOverRate = 0.9,
-                            elitismRatio = 0.0,
-                            maxGen = 200,
-                            selectionSampleSize = 3,
-                            maxKeySize = 40,
-                            mutationType = Individual.MutationType.INSERTION,
-                            tournamentSelectionType = GA.TournamentSelectionType.BEST,
-                            monogram = true,
-                            bigram = true,
-                            trigram = true,
-                            quadgram = true,
-                            quintgram = true
-                        )
-                    })
-                    Thread(Runnable {
-                        GA(
-                            encryptedString = ex3str,
-                            popSize = 1000,
-                            origMutationRate = 0.8,
-                            crossOverRate = 0.9,
-                            elitismRatio = 0.0,
-                            maxGen = 200,
-                            selectionSampleSize = 3,
-                            maxKeySize = 40,
-                            mutationType = Individual.MutationType.INSERTION,
-                            tournamentSelectionType = GA.TournamentSelectionType.BEST,
-                            monogram = true,
-                            bigram = true,
-                            trigram = true,
-                            quadgram = true,
-                            quintgram = true
-                        )
-                    })
-                    Thread(Runnable {
-                        GA(
-                            encryptedString = ex4str,
-                            popSize = 1000,
-                            origMutationRate = 0.8,
-                            crossOverRate = 0.9,
-                            elitismRatio = 0.0,
-                            maxGen = 200,
-                            selectionSampleSize = 3,
-                            maxKeySize = 40,
-                            mutationType = Individual.MutationType.INSERTION,
-                            tournamentSelectionType = GA.TournamentSelectionType.BEST,
-                            monogram = true,
-                            bigram = true,
-                            trigram = true,
-                            quadgram = true,
-                            quintgram = true
-                        )
-                    })
- */
