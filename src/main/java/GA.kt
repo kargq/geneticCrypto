@@ -10,27 +10,23 @@ import java.io.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.random.Random
 import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.min
-import kotlin.random.Random
 
 val TEST_DIR = "tests"
 
 class GA(
-//    val randomNumberSeed: Int = (0..Integer.MAX_VALUE).random(),
-    // size of population
-    val popSize: Int = 10000,
+    val popSize: Int = 10000, // size of population
     val crossOverRate: Double = 0.8,
-    val maxKeySize: Int = 8,
-    // maximum number of generations
+    val maxKeySize: Int = 8, // maximum number of generations
     val maxGen: Int = 100,
     // string to decrypt
     var encryptedString: String = "wyswfslnwzqwdwnvlesiayhidthqhgndwysnlzicjjpakadtveiitwrlhisktberwjtkmfdlkfgaemtjdctqfvabhehwdjeadkwkfkcdxcrxwwxeuvgowvbnwycowgfikvoxklrpfkgyawnrhftkhwrpwzcjksnszywyzkhdxcrxwslhrjiouwpilszagxasdghwlaocvkcpzwarwzcjgxtwhfdajstxqxbklstxreojveerkrbekeouwysafyichjilhgsxqxtkjanhwrbywlhpwkvaxmnsddsjlslghcopagnhrwdeluhtgjcqfvsxqkvakuitqtskxzagpfbusfddidioauaaffalgkiilfbswjehxjqahliqovcbkmcwhodnwksxreojvsdpskopagnhwysafyichdwczlcdpgcowwlpeffwlwacgjqewftxizqlawctvftimkirrwojqvevuvskxuobscstalyduvlpwftpgrzknwlpfv",
     // sample size for tournament selection
     val selectionSampleSize: Int = 3,
-    // mutation rate
-    val origMutationRate: Double = 0.3,
+    val origMutationRate: Double = 0.3, // mutation rate
     val elitism: Boolean = true,
     // Ratio of best individuals preserved after each generation. Elitism
     // Only really works when eliminatingWorst
@@ -51,26 +47,31 @@ class GA(
     val bigram: Boolean = true,
     val trigram: Boolean = true,
     val quadgram: Boolean = true,
-    val quintgram: Boolean = true
+    val quintgram: Boolean = true,
+    val randomNumberSeed: Long = (Long.MIN_VALUE..Long.MAX_VALUE).random()
 ) {
-//    private lateinit var rg: Random
     private var population: MutableList<Individual> = ArrayList()
     private var generationsData: HashMap<Int, List<Double>> = HashMap()
     private var mutationRate = origMutationRate
-    var minFitness: Double = 1.0
+    var minFitness: Double = Double.MAX_VALUE
     // Should not ever get added to population using this reference. This is just for seeing the best found so far.
     private val bestPreserveCount: Int
         get() {
             return min(ceil(elitismRatio * popSize.toDouble()).toInt(), popSize)
         }
-    private val bigramAnalyzer: FrequencyAnalyzer = BigramAnalyzer()
-    private val trigramAnalyzer: FrequencyAnalyzer = TrigramAnalyzer()
-    private val quadgramAnalyzer: FrequencyAnalyzer = QuadgramAnalyzer()
-    private val quintgramAnalyzer: FrequencyAnalyzer = QuintgramAnalyzer()
-    // capped size HashMap
-    private val fitnessCache: LRUCacheMap<String, Double> = LRUCacheMap(popSize * 5)
+
+    // Fitness helpers
+    private val bigramAnalyzer: FrequencyAnalyzer? = if (bigram) BigramAnalyzer() else null
+    private val trigramAnalyzer: FrequencyAnalyzer? = if (trigram) TrigramAnalyzer() else null
+    private val quadgramAnalyzer: FrequencyAnalyzer? = if (quadgram) QuadgramAnalyzer() else null
+    private val quintgramAnalyzer: FrequencyAnalyzer? = if (quintgram) QuintgramAnalyzer() else null
+    // eo fitness helpers
+
+    private val fitnessCache: LRUCacheMap<String, Double> = LRUCacheMap(popSize * 5) // capped size HashMap
+
+    // elitism vars
     var minFitnessSet: MutableSet<String> = HashSet()
-    private var minFitnessIndividual: Individual = Individual(maxKeySize)
+    private var minFitnessIndividual: Individual = Individual("a".repeat(maxKeySize))
 
     // plotting stuff
     private var server: PlotlyServer? = null
@@ -82,11 +83,12 @@ class GA(
     private var genMaxTrace: Trace? = null
     private val meanYList = (0..maxGen).map { 0.0 }.toDoubleArray()
     // eo plotting stuff
+    private var rg: Random
 
 
     init {
-//        Seed.createInstance(randomNumberSeed)
-//        rg = Random(Seed.getInstance())
+        rg = Random(randomNumberSeed)
+        RandomEngine.seed = randomNumberSeed
         info(
             """
 Parameters: 
@@ -101,7 +103,13 @@ mutationType: $mutationType
 elitismRatio: $elitismRatio
 testAppendId: $testAppendId
 tournamentSelectionType: $tournamentSelectionType
-eliminateWorst: $eliminateWorst,
+eliminateWorst: $eliminateWorst
+randomNumberSeed: $randomNumberSeed
+monogram: $monogram
+bigram: $bigram
+trigram: $trigram
+quadgram: $quadgram
+quintgram: $quintgram
 
         """.trimMargin()
         )
@@ -112,11 +120,16 @@ eliminateWorst: $eliminateWorst,
     }
 
     fun getDecryptionKey(): List<String> {
+        rg = Random(randomNumberSeed)
         val startTime = currentTimeMillis()
         initializeRandomPopulation()
         for (gen in 1..maxGen) {
             val genStartTime = currentTimeMillis()
-            info("Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${if (minFitnessSet.isNotEmpty()) minFitnessSet.random() else "none"}")
+            info(
+                "Generation: ${gen} Population: ${population.size} Min fitness prev gen: ${minFitness} for ${if (minFitnessSet.isNotEmpty()) minFitnessSet.random(
+                    rg
+                ) else "none"}"
+            )
             info("Population: ${populationString()}")
             evolve()
             writeGenerationData(gen, (0 until population.size).map { fitness(population[it]) }.toMutableList())
@@ -125,7 +138,8 @@ eliminateWorst: $eliminateWorst,
             info("Elapsed time: ${currentTimeMillis() - startTime}")
         }
         info("Total elapsed time: ${currentTimeMillis() - startTime}")
-
+        info("Possible keys: ${minFitnessSet.toList()}")
+        info("Decrypted text from this key: ${funcTest.decrypt(minFitnessSet.toList()[0], encryptedString)}")
         closePlot()
         return minFitnessSet.toList()
     }
@@ -139,48 +153,45 @@ eliminateWorst: $eliminateWorst,
 
     private fun addRandomIndividualsToPopulation(numIndiv: Int) {
         for (indiv in 0 until numIndiv) {
-            population.add(Individual(maxKeySize))
+            population.add(Individual(maxKeySize, rg))
         }
     }
 
+    /**
+     * @return Fitness 0<= value <=1, lesser is better
+     */
     fun fitness(indiv: Individual): Double {
         val fitnessKey = sanitizeString(indiv.getChromosomeString())
         if (fitnessCache.containsKey(fitnessKey)) {
             return fitnessCache[fitnessKey]!!
         } else {
-            val fitness1 = funcTest.fitness(fitnessKey, encryptedString)
-            val bigramFitness = bigramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
-            val trigramFitness = trigramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
-            val quadgramFitness =
-                quadgramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
-            val quintgramFitness =
-                quintgramAnalyzer.analyse(funcTest.decrypt(fitnessKey, encryptedString))
-
             var num = 0.0
             var den = 0.0
 
             if (monogram) {
-                num += fitness1
+                num += funcTest.fitness(fitnessKey, encryptedString)
                 den++
             }
             if (bigram) {
-                num += bigramFitness
+                num += bigramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (trigram) {
-                num += trigramFitness
+                num += trigramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (quadgram) {
-                num += quadgramFitness
+                num += quadgramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (quintgram) {
-                num += quintgramFitness
+                num += quintgramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
                 den++
             }
 
-            val result = num / den;
+            val result = num / den
+
+//            println(result)
 
             fitnessCache[fitnessKey] = result
 
@@ -200,8 +211,8 @@ eliminateWorst: $eliminateWorst,
 
     private fun doCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
         return when (crossoverType) {
-            CrossoverType.ONE_POINT -> onePointCrossover(indiv1, indiv2)
-            CrossoverType.UNIFORM -> uniformCrossover(indiv1, indiv2)
+            CrossoverType.ONE_POINT -> onePointCrossover(indiv1, indiv2, rg)
+            CrossoverType.UNIFORM -> uniformCrossover(indiv1, indiv2, rg)
         }
     }
 
@@ -221,14 +232,14 @@ eliminateWorst: $eliminateWorst,
         }
 
         population = tournamentSelection().toMutableList()
-        population.shuffle()
+        population.shuffle(rg)
 
         // apply crossover
         var count = 0
         while (count < population.size) {
             val parent1 = population[count]
             val parent2 = population[count + 1]
-            val randCrossover = Random.nextDouble(0.0, 1.0)
+            val randCrossover = rg.nextDouble(0.0, 1.0)
 
             if (randCrossover < crossOverRate) {
                 // do crossover
@@ -238,14 +249,14 @@ eliminateWorst: $eliminateWorst,
                 population[count + 1] = children[1]
 
                 // apply mutation
-                val randMutation = Random.nextDouble(0.0, 1.0)
+                val randMutation = rg.nextDouble(0.0, 1.0)
                 if (randMutation < mutationRate) {
-                    population[count].mutate(mutationType)
+                    population[count].mutate(mutationType, rg)
                 }
 
-                val randMutation2 = Random.nextDouble(0.0, 1.0)
+                val randMutation2 = rg.nextDouble(0.0, 1.0)
                 if (randMutation2 < mutationRate) {
-                    population[count + 1].mutate(mutationType)
+                    population[count + 1].mutate(mutationType, rg)
                 }
                 // eo mutation
 
@@ -257,7 +268,7 @@ eliminateWorst: $eliminateWorst,
 
         if (eliminateWorst) {
             sortPopulationByFitness()
-        } else population.shuffle()
+        } else population.shuffle(rg)
 
         truncatePopulationToMaxSize()
     }
@@ -315,24 +326,25 @@ eliminateWorst: $eliminateWorst,
 
     // using fitness values as probabilities for selection, doing a weighted random selection. Better fitness has higher
     // probability of being selected.
+    // TODO: check implementation
     fun weightedSelectFromSample(sample: List<Individual>): Individual {
         val weights = ArrayList<Double>(sample.size)
-        var currSum = 0.0
+        var currSum: Double = 0.0
 
-        val fitnessVals: MutableList<Double> = ArrayList()
+        val inverseFitnessVals: MutableList<Double> = ArrayList()
 
         // using fitness values as probabilities for selection, doing a weighted random selection.
 
-        // fill up probability and weigths table
+        // fill up probability and weights table
         for (indiv in sample) {
-            val fitness = 1 - fitness(indiv)
-            currSum += fitness
+            val inverseFitness = 1 / fitness(indiv)
+            currSum += inverseFitness
             weights.add(currSum)
-            fitnessVals.add(fitness)
+            inverseFitnessVals.add(inverseFitness)
         }
 
         var theChosenOne: Individual? = null
-        val randomChosen = Random.nextDouble(0.0, currSum)
+        val randomChosen = rg.nextDouble(0.0, currSum)
 
         for ((index, weight) in weights.withIndex()) {
             if (randomChosen <= weight) {
@@ -344,12 +356,12 @@ eliminateWorst: $eliminateWorst,
         return theChosenOne!!
     }
 
-    // pick a random sample from population of size selextionSampleSize
+    // pick a random sample from population of size selectionSampleSize
     fun pickRandomSampleFromPopulation(): List<Individual> {
         val result = ArrayList<Individual>()
         for (i in 0 until selectionSampleSize) {
             if (population.size <= 0) break
-            val randIndex = (0 until population.size).random()
+            val randIndex = (0 until population.size).random(rg)
             result.add(population[randIndex])
         }
 
@@ -368,7 +380,7 @@ eliminateWorst: $eliminateWorst,
 
     private fun writeGenerationData(gen: Int, data: List<Double>) {
         generationsData[gen] = data
-        csvOutput.println(data.joinToString(","))
+        csvOutput.println("$gen,${data.joinToString(",")}")
     }
 
 
@@ -378,7 +390,7 @@ eliminateWorst: $eliminateWorst,
         val used: HashMap<Int, Boolean> = HashMap()
 
         while (resultList.size < printHowMany) {
-            val randIndex = (0 until population.size).random()
+            val randIndex = (0 until population.size).random(rg)
             if (!(used.containsKey(randIndex) && used[randIndex]!!)) {
                 resultList.add(population[randIndex].getChromosomeString())
                 used[randIndex] = true
@@ -398,7 +410,7 @@ eliminateWorst: $eliminateWorst,
             "update" to {
                 "enabled" to true
             }
-            "port" to (1234..49151).random()
+            "port" to (1234..49151).random(rg)
         }
 
         populationFitnessPlot = Plotly.plot2D {

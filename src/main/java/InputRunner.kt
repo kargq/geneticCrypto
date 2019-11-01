@@ -6,8 +6,6 @@ class InputRunner(input: InputStream, appendMore: String = "") {
     init {
         val scn: Scanner = Scanner(input)
 
-        val numTests: Int = scn.nextInt()
-        for (i in 0 until numTests) {
             scn.next()
             val popSize: Int = scn.nextInt()
             scn.next()
@@ -53,6 +51,8 @@ class InputRunner(input: InputStream, appendMore: String = "") {
             }
             scn.next()
             val eliminateWorst: Boolean = scn.nextBoolean()
+        scn.next()
+        val useSeed: Boolean = scn.nextBoolean()
 
             val ga = GA(
                 popSize = popSize,
@@ -77,9 +77,6 @@ class InputRunner(input: InputStream, appendMore: String = "") {
             println()
             println()
             println("Possible Keys: $keys")
-
-            scn.next()
-        }
     }
 }
 

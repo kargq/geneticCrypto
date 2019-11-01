@@ -15,12 +15,60 @@ fun main() {
             encryptedString = ex1str,
             maxKeySize = 8,
             popSize = 600,
-            maxGen = 300,
+            maxGen = 400,
             origMutationRate = 0.1,
             crossOverRate = 0.8,
             eliminateWorst = true,
             elitism = true,
-            mutationType = Individual.MutationType.SCRAMBLE_INSERTION
+            mutationType = Individual.MutationType.SCRAMBLE_INSERTION,
+            monogram = true,
+            bigram = true,
+            trigram = true,
+            quadgram = true,
+            quintgram = true,
+            randomNumberSeed = 179675417
+        ),
+        givenKey = ex1key
+    )
+
+    Test(
+        GA(
+            encryptedString = ex1str,
+            maxKeySize = 8,
+            popSize = 600,
+            maxGen = 400,
+            origMutationRate = 0.1,
+            crossOverRate = 0.8,
+            eliminateWorst = true,
+            elitism = true,
+            mutationType = Individual.MutationType.SCRAMBLE_INSERTION,
+            monogram = true,
+            bigram = true,
+            trigram = true,
+            quadgram = true,
+            quintgram = true,
+            randomNumberSeed = 179675417
+        ),
+        givenKey = ex1key
+    )
+
+    Test(
+        GA(
+            encryptedString = ex1str,
+            maxKeySize = 8,
+            popSize = 600,
+            maxGen = 400,
+            origMutationRate = 0.1,
+            crossOverRate = 0.8,
+            eliminateWorst = true,
+            elitism = true,
+            mutationType = Individual.MutationType.SCRAMBLE_INSERTION,
+            monogram = true,
+            bigram = true,
+            trigram = true,
+            quadgram = true,
+            quintgram = true,
+            randomNumberSeed = 179675417
         ),
         givenKey = ex1key
     )

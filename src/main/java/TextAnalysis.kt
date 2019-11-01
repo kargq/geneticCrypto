@@ -1,6 +1,7 @@
 import com.beust.klaxon.Klaxon
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.exp
 
 
 val ASSETS_PATH = "assets/"
@@ -55,10 +56,8 @@ class QuintgramAnalyzer : FrequencyAnalyzer {
 fun analyzeFrequencies(text: String, size: Int, expectedFrequencies: Map<String, Double>): Double {
     val stext = sanitizeText(text)
     val foundMap = HashMap<String, Double>()
-    val totalOccr = stext.length - (size - 1)
 
     for (i in 0..(stext.length - size)) {
-
         var key = ""
         for (j in 0 until size) {
             key += stext[i + j]
@@ -67,24 +66,21 @@ fun analyzeFrequencies(text: String, size: Int, expectedFrequencies: Map<String,
     }
 
     //Calculate the total difference between the expected frequencies and the actual frequencies
-    var score = 1.0
+    var score: Double = 0.0
 
-//    for (expectedKey in expectedFrequencies.keys) {
-//        val expectedFrequency: Double = expectedFrequencies[expectedKey]!!
-//        val foundFrequency: Double = foundMap.getOrDefault(expectedKey, 0.0) / totalOccr
-//        val diff = abs(expectedFrequency - foundFrequency)
-//        score += diff
-//    }
+    // calculate euclidean distance between found value and expected value.
+    var totalExpected: Double = 0.0
     for (foundKey in foundMap.keys) {
         if (expectedFrequencies.containsKey(foundKey)) {
-            val foundFrequency = foundMap[foundKey]!!
+            val foundFrequency = foundMap[foundKey]!! / (stext.length - size)
             val expectedFrequency = expectedFrequencies[foundKey]!!
+            totalExpected += expectedFrequency
             val diff = abs(expectedFrequency - foundFrequency)
-            score -= diff
+            score += diff
         }
     }
 
-    return score
+    return (score + (1 - totalExpected)) / 2
 }
 
 fun sanitizeText(text: String): String {
@@ -93,4 +89,8 @@ fun sanitizeText(text: String): String {
     d = d.replace("[^a-z]".toRegex(), "")
     d = d.replace("\\s".toRegex(), "")
     return d
+}
+
+fun main() {
+    val ga = GA()
 }

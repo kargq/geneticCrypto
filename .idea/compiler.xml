@@ -3,8 +3,6 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="3p71.assign_2.main" target="1.8" />
-      <module name="3p71.assign_2.test" target="1.8" />
-      <module name="assign_2.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

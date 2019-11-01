@@ -4,47 +4,26 @@ val EMPTY_CHARACTER: Char = '-'
 val EMPTY_CHAR_PROBABILITY: Double = 0.10
 
 class Individual {
-    
-//    private val rg: Random = Random(Seed.getInstance())
-    
-    
+
     enum class MutationType {
         SCRAMBLE, INSERTION, SCRAMBLE_INSERTION
     }
 
     var chromosome: CharArray
 
-    constructor(chromosome: CharArray) {
-        this.chromosome = chromosome
-    }
-
-    constructor(minKeySize: Int, maxKeySize: Int) {
-        chromosome = CharArray(maxKeySize)
-        for (i in 0 until maxKeySize) {
-            chromosome[i] = getRandomNonEmptyAllowedChar()
-        }
-        for (i in 0 until maxKeySize - minKeySize) {
-            chromosome[(0 until maxKeySize).random()] = EMPTY_CHARACTER
-        }
-    }
-
     constructor(chromosomeString: String) {
         this.chromosome = chromosomeString.toCharArray()
     }
 
-    constructor(chromosomeSize: Int) {
+    constructor(chromosomeSize: Int, rg: Random) {
         chromosome = CharArray(chromosomeSize)
         for (i in 0 until chromosomeSize) {
-            chromosome[i] = getRandomAllowedChar()
+            chromosome[i] = getRandomAllowedChar(rg)
         }
     }
 
-    private fun getRandomAllowedChar(): Char {
-        return if (Random.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) EMPTY_CHARACTER else ('a'..'z').random()
-    }
-
-    private fun getRandomNonEmptyAllowedChar(): Char {
-        return ('a'..'z').random()
+    private fun getRandomAllowedChar(rg: Random): Char {
+        return if (rg.nextDouble(0.0, 1.0) < EMPTY_CHAR_PROBABILITY) EMPTY_CHARACTER else ('a'..'z').random(rg)
     }
 
     fun getChromosomeString(): String {
@@ -55,19 +34,19 @@ class Individual {
         return chromosome.size
     }
 
-    fun mutate(type: MutationType) {
+    fun mutate(type: MutationType, rg: Random) {
         when (type) {
-            MutationType.SCRAMBLE -> applyScrambleMutation()
-            MutationType.INSERTION -> applyInsertionMutation()
-            MutationType.SCRAMBLE_INSERTION -> applySrambleInsertionMutation()
+            MutationType.SCRAMBLE -> applyScrambleMutation(rg)
+            MutationType.INSERTION -> applyInsertionMutation(rg)
+            MutationType.SCRAMBLE_INSERTION -> applySrambleInsertionMutation(rg)
         }
     }
 
-    fun applyScrambleMutation(scrambleSize: Int = chromosome.size / 2) {
+    fun applyScrambleMutation(rg: Random, scrambleSize: Int = chromosome.size / 2) {
         val randomIndices = ArrayList<Int>(scrambleSize)
         val range: MutableList<Int> = (0 until chromosomeSize()).toMutableList()
         for (i in 0 until scrambleSize) {
-            val randIndex = range.random()
+            val randIndex = range.random(rg)
             range.remove(randIndex)
             randomIndices.add(randIndex)
         }
@@ -77,21 +56,21 @@ class Individual {
             toScramble[iterIndex] = chromosome[ind]
         }
 
-        val scrambled = toScramble.asList().shuffled()
+        val scrambled = toScramble.asList().shuffled(rg)
 
         for ((iterIndex, ind) in randomIndices.withIndex()) {
             chromosome[ind] = scrambled[iterIndex]
         }
     }
 
-    private fun applyInsertionMutation() {
-        val pos = (0 until chromosomeSize()).random()
-        chromosome[pos] = getRandomAllowedChar()
+    private fun applyInsertionMutation(rg: Random) {
+        val pos = (0 until chromosomeSize()).random(rg)
+        chromosome[pos] = getRandomAllowedChar(rg)
     }
 
-    private fun applySrambleInsertionMutation() {
-        applyScrambleMutation()
-        applyInsertionMutation()
+    private fun applySrambleInsertionMutation(rg: Random) {
+        applyScrambleMutation(rg)
+        applyInsertionMutation(rg)
     }
 
     override fun toString(): String {
@@ -102,9 +81,9 @@ class Individual {
 
 }
 
-fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
+fun onePointCrossover(indiv1: Individual, indiv2: Individual, rg: Random): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()
-    val crossoverPoint = (0..indiv1.chromosomeSize()).random(Random(Seed.getInstance()))
+    val crossoverPoint = (0..indiv1.chromosomeSize()).random(rg)
 
     val child1 = Individual(indiv1.getChromosomeString())
     val child2 = Individual(indiv2.getChromosomeString())
@@ -123,7 +102,7 @@ fun onePointCrossover(indiv1: Individual, indiv2: Individual): List<Individual> 
 }
 
 
-fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
+fun uniformCrossover(indiv1: Individual, indiv2: Individual, rg: Random): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()
 
     val child1 = Individual(indiv1.getChromosomeString())
@@ -133,8 +112,8 @@ fun uniformCrossover(indiv1: Individual, indiv2: Individual): List<Individual> {
 
     for (i in 0 until chromosomeSize) {
         // 50 % change of gene coming from either individual.
-        child1.chromosome[i] = if ((1..2).random(Random(Seed.getInstance())) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
-        child2.chromosome[i] = if ((1..2).random(Random(Seed.getInstance())) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
+        child1.chromosome[i] = if ((1..2).random(rg) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
+        child2.chromosome[i] = if ((1..2).random(rg) == 1) indiv1.chromosome[i] else indiv2.chromosome[i]
     }
 
     result.add(child1)

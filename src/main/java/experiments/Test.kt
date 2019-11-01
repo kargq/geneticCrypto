@@ -12,8 +12,21 @@ class Test(
 
     init {
         if (givenKey != null) {
-
-            println("Fitness of given key from in use func: ${GA(toPlot = false, encryptedString = ga.encryptedString, maxKeySize = ga.maxKeySize).fitness(Individual(givenKey))}")
+            println(
+                "Fitness of given key from in use func: ${
+                GA(
+                    toPlot = false,
+                    encryptedString = ga.encryptedString,
+                    maxKeySize = ga.maxKeySize,
+                    randomNumberSeed = ga.randomNumberSeed,
+                    monogram = ga.monogram,
+                    bigram = ga.bigram,
+                    trigram = ga.trigram,
+                    quadgram = ga.quadgram,
+                    quintgram = ga.quintgram
+                ).fitness(Individual(givenKey))
+                }"
+            )
             println("Decrypted: ${funcTest.decrypt(givenKey, ga.encryptedString)}")
         }
 
@@ -21,13 +34,11 @@ class Test(
 
         val keys = ga.getDecryptionKey()
 
-
-
-
-
-        println("""Possible keys: $keys 
+        println(
+            """Possible keys: $keys 
             Decrypted text from this key: ${funcTest.decrypt(keys[0], ga.encryptedString)}
-            """.trimMargin())
+            """.trimMargin()
+        )
 
     }
 }
