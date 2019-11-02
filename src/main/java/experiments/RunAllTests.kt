@@ -39,7 +39,8 @@ fun main() {
                                         trigram = !original,
                                         quadgram = !original,
                                         quintgram = !original,
-                                        tournamentSelectionType = tournamentSelectionType
+                                        tournamentSelectionType = tournamentSelectionType,
+                                        toPlot = false
                                     ).getDecryptionKey()
                                 }).start()
                                 Thread(Runnable {
@@ -59,7 +60,8 @@ fun main() {
                                         trigram = !original,
                                         quadgram = !original,
                                         quintgram = !original,
-                                        tournamentSelectionType = tournamentSelectionType
+                                        tournamentSelectionType = tournamentSelectionType,
+                                        toPlot = false
                                     ).getDecryptionKey()
                                 }).start()
                                 Thread(Runnable {
@@ -79,7 +81,8 @@ fun main() {
                                         trigram = !original,
                                         quadgram = !original,
                                         quintgram = !original,
-                                        tournamentSelectionType = tournamentSelectionType
+                                        tournamentSelectionType = tournamentSelectionType,
+                                        toPlot = false
                                     ).getDecryptionKey()
                                 }).start()
                                 Thread(Runnable {
@@ -99,7 +102,8 @@ fun main() {
                                         trigram = !original,
                                         quadgram = !original,
                                         quintgram = !original,
-                                        tournamentSelectionType = tournamentSelectionType
+                                        tournamentSelectionType = tournamentSelectionType,
+                                        toPlot = false
                                     ).getDecryptionKey()
                                 }).start()
                             }
