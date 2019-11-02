@@ -7,26 +7,29 @@ val ex4key = "supercalifragilisticexpialidocious"
 //val ex4key = "supercalifragilistocexpiabidocious"
 //val ex4key = "supercalifragilisticeovialydocious"
 fun main() {
-    Test(
-        GA(
-            encryptedString = ex4str,
-            popSize = 1000,
-            origMutationRate = 0.8,
-            crossOverRate = 0.9,
-            elitismRatio = 0.0,
-            maxGen = 200,
-            selectionSampleSize = 3,
-            maxKeySize = 40,
-            mutationType = Individual.MutationType.INSERTION,
-            tournamentSelectionType = GA.TournamentSelectionType.BEST,
-            monogram = true,
-            bigram = true,
-            trigram = true,
-            quadgram = true,
-            quintgram = true
-        ),
-        givenKey = ex4key
-    )
+    Thread(Runnable{
+        Test(
+            GA(
+                encryptedString = ex4str,
+                popSize = 1000,
+                origMutationRate = 0.8,
+                crossOverRate = 0.9,
+                elitismRatio = 0.0,
+                maxGen = 200,
+                selectionSampleSize = 3,
+                maxKeySize = 40,
+                mutationType = Individual.MutationType.INSERTION,
+                tournamentSelectionType = GA.TournamentSelectionType.BEST,
+                monogram = true,
+                bigram = true,
+                trigram = true,
+                quadgram = true,
+                quintgram = true
+            ),
+            givenKey = ex4key
+        )
+    }).start()
+
 }
 
 // experiments.Test 1

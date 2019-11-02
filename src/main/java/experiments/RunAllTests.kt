@@ -4,13 +4,14 @@ import GA
 
 fun main() {
     val mutationTypes = arrayOf(
-        Individual.MutationType.INSERTION,
-        Individual.MutationType.SCRAMBLE,
+//        Individual.MutationType.INSERTION,
+//        Individual.MutationType.SCRAMBLE,
         Individual.MutationType.SCRAMBLE_INSERTION
     )
     val crossoverTypes = arrayOf(CrossoverType.ONE_POINT, CrossoverType.UNIFORM)
     val crossoverRates = arrayOf(0.9, 1.0)
     val mutationRates = arrayOf(0.1, 0.0)
+    val tournamentSelectionTypes = arrayOf(GA.TournamentSelectionType.WEIGHTED)
 
     RandomEngine.seed = 4
 
@@ -18,8 +19,8 @@ fun main() {
         for (mutType in mutationTypes) {
             for (mutRate in mutationRates) {
                 for (crossRate in crossoverRates) {
-                    for(original in arrayOf(true, false)) {
-                        for(tournamentSelectionType in GA.TournamentSelectionType.values()) {
+                    for (original in arrayOf(false)) {
+                        for (tournamentSelectionType in tournamentSelectionTypes) {
                             Thread(Runnable {
                                 GA(
                                     encryptedString = ex1str,
@@ -38,7 +39,7 @@ fun main() {
                                     quadgram = !original,
                                     quintgram = !original,
                                     tournamentSelectionType = tournamentSelectionType
-                                    ).getDecryptionKey()
+                                ).getDecryptionKey()
                             }).start()
                             Thread(Runnable {
                                 GA(
@@ -47,7 +48,7 @@ fun main() {
                                     popSize = 1000,
                                     maxGen = 300,
                                     testAppendId = "ex2_${crossType}_${mutType}_${mutRate}_${crossRate}_${original}_${tournamentSelectionType}",
-                                            crossoverType = crossType,
+                                    crossoverType = crossType,
                                     mutationType = mutType,
                                     origMutationRate = mutRate,
                                     crossOverRate = crossRate,
