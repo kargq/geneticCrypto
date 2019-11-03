@@ -4,8 +4,8 @@ import GA
 
 fun main() {
     val mutationTypes = arrayOf(
-//        Individual.MutationType.INSERTION,
-//        Individual.MutationType.SCRAMBLE,
+        Individual.MutationType.INSERTION,
+        Individual.MutationType.SCRAMBLE,
         Individual.MutationType.SCRAMBLE_INSERTION
     )
     val crossoverTypes = arrayOf(CrossoverType.ONE_POINT, CrossoverType.UNIFORM)
@@ -13,13 +13,11 @@ fun main() {
     val mutationRates = arrayOf(0.1, 0.0)
     val tournamentSelectionTypes = arrayOf(GA.TournamentSelectionType.WEIGHTED)
 
-    RandomEngine.seed = 4
-
     for (crossType in crossoverTypes) {
         for (mutType in mutationTypes) {
             for (mutRate in mutationRates) {
                 for (crossRate in crossoverRates) {
-                    for (original in arrayOf(false)) {
+                    for (original in arrayOf(true)) {
                         for (tournamentSelectionType in tournamentSelectionTypes) {
                             for(testNum in 1..5) {
                                 Thread(Runnable {

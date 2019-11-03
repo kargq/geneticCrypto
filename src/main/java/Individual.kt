@@ -81,6 +81,10 @@ class Individual {
 
 }
 
+
+/**
+ * d
+ */
 fun onePointCrossover(indiv1: Individual, indiv2: Individual, rg: Random): List<Individual> {
     val chromosomeSize = indiv1.chromosomeSize()
     val crossoverPoint = (0..indiv1.chromosomeSize()).random(rg)

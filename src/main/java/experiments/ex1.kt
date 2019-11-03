@@ -22,10 +22,11 @@ fun main() {
             elitism = true,
             mutationType = Individual.MutationType.INSERTION,
             monogram = true,
-            bigram = true,
-            trigram = true,
-            quadgram = true,
-            quintgram = true
+            bigram = false,
+            trigram = false,
+            quadgram = false,
+            quintgram = false,
+            tournamentSelectionType = GA.TournamentSelectionType.BEST
 //            randomNumberSeed = 179675417
         ),
         givenKey = ex1key

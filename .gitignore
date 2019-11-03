@@ -75,3 +75,7 @@ build/
 *.test.csv
 tests/
 graphs/
+experiment_data/
+.DS_Store
+bin
+*.csv
