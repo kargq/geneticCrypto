@@ -79,3 +79,6 @@ experiment_data/
 .DS_Store
 bin
 *.csv
+.classpath
+.project
+*.eclipse.*

@@ -26,24 +26,26 @@ def make_average_csv(filenames, res_filename):
         result_writer.writerow(row_to_write)
 
 
-experiments = [1, 2, 3, 4]
-# experiments = [1]
+# experiments = [1, 2, 3, 4]
+experiments = [4]
 tests = [1,2,3,4,5]
 # crossovers = ["UNIFORM"]
-# crossovers = ["ONE_POINT"]
-crossovers = ["ONE_POINT", "UNIFORM"]
+crossovers = ["ONE_POINT"]
+# crossovers = ["ONE_POINT", "UNIFORM"]
 # mutations = ["SCRAMBLE"]
-# mutations = ["INSERTION"]
+mutations = ["INSERTION"]
 # mutations = ["SCRAMBLE_INSERTION"]
-mutations = ["SCRAMBLE", "INSERTION", "SCRAMBLE_INSERTION"]
-mutation_rates = [0.0, 0.1]
+# mutations = ["SCRAMBLE", "INSERTION", "SCRAMBLE_INSERTION"]
+# mutation_rates = [0.0, 0.1]
+mutation_rates = [0.1]
 # mutation_rates = [0.1]
 # crossover_rates = [0.9]
-crossover_rates = [0.9, 1.0]
-original = ["true"]
+crossover_rates = [1.0]
+# crossover_rates = [0.9, 1.0]
+original = ["false"]
 # tournament_selection_types = ["BEST", "WEIGHTED"]
 # tournament_selection_types = ["BEST"]
-tournament_selection_types = ["WEIGHTED"]
+tournament_selection_types = ["BEST"]
 
 filenames = []
 
@@ -63,7 +65,7 @@ for experiment in experiments:
 
 
 print(filenames)
-make_average_csv(filenames, "tweighted.csv")
+make_average_csv(filenames, "ex4res.csv")
     
 
 
