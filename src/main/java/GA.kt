@@ -15,9 +15,10 @@ import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.min
 
-val TEST_DIR = "tests"
+val TEST_DIR = "output"
 
 class GA(
+    val madedirs: Boolean = File(TEST_DIR).mkdirs(), // make TEST_DIR if it does not exist
     val popSize: Int = 10000, // size of population
     val crossOverRate: Double = 0.8,
     val maxKeySize: Int = 8, // maximum number of generations
@@ -88,7 +89,6 @@ class GA(
 
     init {
         rg = Random(randomNumberSeed)
-        RandomEngine.seed = randomNumberSeed
         info(
             """
 Parameters: 
@@ -139,7 +139,7 @@ quintgram: $quintgram
         }
         info("Total elapsed time: ${currentTimeMillis() - startTime}")
         info("Possible keys: ${minFitnessSet.toList()}")
-        info("Decrypted text from this key: ${funcTest.decrypt(minFitnessSet.toList()[0], encryptedString)}")
+        info("Decrypted text from this key: ${Vigenere.decrypt(minFitnessSet.toList()[0], encryptedString)}")
         closePlot()
         return minFitnessSet.toList()
     }
@@ -169,23 +169,23 @@ quintgram: $quintgram
             var den = 0.0
 
             if (monogram) {
-                num += funcTest.fitness(fitnessKey, encryptedString)
+                num += Vigenere.fitness(fitnessKey, encryptedString)
                 den++
             }
             if (bigram) {
-                num += bigramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
+                num += bigramAnalyzer!!.analyse(Vigenere.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (trigram) {
-                num += trigramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
+                num += trigramAnalyzer!!.analyse(Vigenere.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (quadgram) {
-                num += quadgramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
+                num += quadgramAnalyzer!!.analyse(Vigenere.decrypt(fitnessKey, encryptedString))
                 den++
             }
             if (quintgram) {
-                num += quintgramAnalyzer!!.analyse(funcTest.decrypt(fitnessKey, encryptedString))
+                num += quintgramAnalyzer!!.analyse(Vigenere.decrypt(fitnessKey, encryptedString))
                 den++
             }
 

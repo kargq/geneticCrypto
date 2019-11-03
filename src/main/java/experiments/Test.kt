@@ -2,7 +2,7 @@ package experiments
 
 import GA
 import Individual
-import funcTest
+import Vigenere
 
 class Test(
     val ga: GA,
@@ -27,7 +27,7 @@ class Test(
                 ).fitness(Individual(givenKey))
                 }"
             )
-            println("Decrypted: ${funcTest.decrypt(givenKey, ga.encryptedString)}")
+            println("Decrypted: ${Vigenere.decrypt(givenKey, ga.encryptedString)}")
         }
 
         println("Trying to determine decrpytion key ...")
@@ -36,7 +36,7 @@ class Test(
 
         println(
             """Possible keys: $keys 
-            Decrypted text from this key: ${funcTest.decrypt(keys[0], ga.encryptedString)}
+            Decrypted text from this key: ${Vigenere.decrypt(keys[0], ga.encryptedString)}
             """.trimMargin()
         )
 

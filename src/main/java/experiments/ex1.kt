@@ -1,14 +1,14 @@
 package experiments
 
 import GA
-import funcTest
+import Vigenere
 
 val ex1str = "xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwnochsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdwpcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxclwzocdctmjebx"
 val ex1key = "password"
 
 fun main() {
-    println(funcTest.fitness("lpwswokd", ex1str))
-    println(funcTest.fitness("password", ex1str))
+    println(Vigenere.fitness("lpwswokd", ex1str))
+    println(Vigenere.fitness("password", ex1str))
     Thread(Runnable{
     Test(
         GA(

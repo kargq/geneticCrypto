@@ -4,25 +4,24 @@ import GA
 
 fun main() {
     val mutationTypes = arrayOf(
-        Individual.MutationType.INSERTION
-//        Individual.MutationType.SCRAMBLE,
-//        Individual.MutationType.SCRAMBLE_INSERTION
+        Individual.MutationType.INSERTION,
+        Individual.MutationType.SCRAMBLE,
+        Individual.MutationType.SCRAMBLE_INSERTION
     )
     val crossoverTypes = arrayOf(
-        CrossoverType.ONE_POINT
-//        CrossoverType.UNIFORM
+        CrossoverType.ONE_POINT,
+        CrossoverType.UNIFORM
     )
-//    val crossoverRates = arrayOf(0.9, 1.0)
-    val crossoverRates = arrayOf(1.0)
-//    val crossoverRates = arrayOf(0.9)
-    val mutationRates = arrayOf(0.2)
-//    val mutationRates = arrayOf(0.1, 0.0)
+    val crossoverRates = arrayOf(0.9, 1.0)
+
+
+    val mutationRates = arrayOf(0.1, 0.0)
     val tournamentSelectionTypes = arrayOf(
-//        GA.TournamentSelectionType.WEIGHTED,
+        GA.TournamentSelectionType.WEIGHTED,
         GA.TournamentSelectionType.BEST
     )
     val fitnesses = arrayOf(
-//        true,
+        true,
         false
     )
 
@@ -30,9 +29,9 @@ fun main() {
         for (mutType in mutationTypes) {
             for (mutRate in mutationRates) {
                 for (crossRate in crossoverRates) {
-                    for (original in fitnesses ) {
+                    for (original in fitnesses) {
                         for (tournamentSelectionType in tournamentSelectionTypes) {
-                            for(testNum in 1..5) {
+                            for (testNum in 1..5) {
                                 Thread(Runnable {
                                     GA(
                                         encryptedString = ex1str,

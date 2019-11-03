@@ -1,0 +1,20 @@
+Compiling:
+
+Import project using intelliJ.
+Use gradle and kotlin.
+
+Running:
+
+
+Files overview: -
+
+Use InputRunner.kt this is the entry point.
+
+The main class for the Genetic Algorithm is GA.kt
+
+Individual.kt has things relating to an individual, and crossover and mutation operators
+
+TextAnalysis.kt has code for the fitness function.
+
+The provided java code for encryption, decryption and fitness using monograms is inside Vigenere.java
+
