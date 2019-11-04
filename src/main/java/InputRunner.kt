@@ -1,23 +1,60 @@
 import java.io.FileInputStream
 import java.io.InputStream
+import java.io.OutputStream
+import java.io.PrintStream
 import java.lang.Exception
+import java.nio.file.Paths
 import java.util.*
 import kotlin.collections.HashMap
 
 class InputRunner(input: InputStream) {
     init {
         try {
+            println("Current directory: ${Paths.get("").toAbsolutePath()}")
             val scn: Scanner = Scanner(input)
 
             val mapi: HashMap<String, String> = HashMap()
 
-            while (scn.hasNext()) {
-                val key = scn.next()
-                val value = scn.next()
+            var key: String = ""
+            var value: String = ""
+            while (value != "end" && key != "end") {
+                key = if (scn.hasNext()) scn.next() else "end"
+                value = if (scn.hasNext()) scn.next() else "end"
                 mapi[key] = value
             }
 
-            val default: GA = GA()
+            println(mapi)
+
+            // just an empty printstream
+            val dumpStream = PrintStream(object : OutputStream() {
+                override fun write(b: Int) {
+                }
+
+                override fun write(b: ByteArray) {
+                }
+
+                override fun write(b: ByteArray, off: Int, len: Int) {
+                }
+
+                override fun flush() {
+                }
+
+                override fun close() {
+
+                }
+            })
+
+            val default: GA = GA(
+                csvOutput = dumpStream,
+                infoOutput = dumpStream,
+                toPlot = false,
+                monogram = false,
+                bigram = false,
+                trigram = false,
+                quadgram = false,
+                quintgram = false,
+                silenceOut = true
+            )
 
             val popSize: Int = if (mapi.containsKey("popSize")) mapi["popSize"]!!.toInt() else default.popSize
             val crossOverRate: Double =
@@ -87,7 +124,15 @@ class InputRunner(input: InputStream) {
             println("Possible Keys: $keys")
 
         } catch (e: Exception) {
-            println("Something went wrong, please check the input file and try again.")
+            e.printStackTrace()
+            println("===========================")
+            println()
+            println(
+                "Something went wrong, please check the input file and try again. There should be a input.txt file in ${
+                Paths.get("").toAbsolutePath()
+                }"
+
+            )
         }
     }
 }

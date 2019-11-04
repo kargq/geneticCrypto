@@ -29,8 +29,7 @@ class GA(
     val selectionSampleSize: Int = 3,
     val origMutationRate: Double = 0.3, // mutation rate
     val elitism: Boolean = true,
-    // Ratio of best individuals preserved after each generation. Elitism
-    // Only really works when eliminatingWorst
+    // Ratio of best individuals preserved after each generation.
     val elitismRatio: Double = 0.0,
     // id for output files
     val testAppendId: String = (0..999999).random().toString(),
@@ -49,7 +48,8 @@ class GA(
     val trigram: Boolean = true,
     val quadgram: Boolean = true,
     val quintgram: Boolean = true,
-    val randomNumberSeed: Long = (Long.MIN_VALUE..Long.MAX_VALUE).random()
+    val randomNumberSeed: Long = (Long.MIN_VALUE..Long.MAX_VALUE).random(),
+    val silenceOut: Boolean = false
 ) {
     private var population: MutableList<Individual> = ArrayList()
     private var generationsData: HashMap<Int, List<Double>> = HashMap()
@@ -100,7 +100,6 @@ maxGen: $maxGen
 selectionSampleSize: $selectionSampleSize 
 mutationRate: $mutationRate 
 mutationType: $mutationType
-elitismRatio: $elitismRatio
 testAppendId: $testAppendId
 tournamentSelectionType: $tournamentSelectionType
 eliminateWorst: $eliminateWorst
@@ -370,7 +369,7 @@ quintgram: $quintgram
 
     private fun info(i: Any) {
         infoOutput.println(i.toString())
-        println(i.toString())
+        if(!silenceOut) println(i.toString())
     }
 
     private fun sanitizeString(c: String): String {

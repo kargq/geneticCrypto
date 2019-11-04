@@ -1,14 +1,12 @@
 popSize 300
 maxKeySize 8
-maxGen 100
+maxGen 200
 encryptedString xbwdesmhihslwhkktefvktkktcwfpiibihwmosfilojvooegvefwnochsuuspsureifakbnlalzsrsroiejwzgfpjczldokrceoahzshpbdwpcjstacgbarfwifwohylckafckzwwomlalghrtafchfetcgfpfrgxclwzocdctmjebx
-selectionSampleSize 3
 crossOverRate 1.0
 origMutationRate 0.1
-elitismRatio 0.01
 testAppendId 1
 toPlot true
-mutationType SCRAMBLE
-crossoverType ONE_POINT,
-tournamentSelectionType WEIGHTED
-eliminateWorst true
+mutationType INSERTION
+crossoverType ONE_POINT
+tournamentSelectionType BEST
+end
