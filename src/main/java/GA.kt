@@ -474,7 +474,7 @@ quintgram: $quintgram
 
     private fun closePlot() {
         if (toPlot) {
-            genMeanPlot!!.makeFile(File("tests/plot$testAppendId.html"), show = false)
+            genMeanPlot!!.makeFile(File("${TEST_DIR}/plot$testAppendId.html"), show = false)
             server!!.stop()
         }
     }

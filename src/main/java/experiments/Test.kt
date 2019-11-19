@@ -23,7 +23,8 @@ class Test(
                     bigram = ga.bigram,
                     trigram = ga.trigram,
                     quadgram = ga.quadgram,
-                    quintgram = ga.quintgram
+                    quintgram = ga.quintgram,
+                    silenceOut = true
                 ).fitness(Individual(givenKey))
                 }"
             )
