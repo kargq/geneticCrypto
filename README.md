@@ -11,7 +11,8 @@ or import project from the intelliJ start dialog
 `From external model> gradle> defaults should be fine and finish.`
 
 Or, compile using gradle: -
-./gradlew build
+
+`./gradlew build`
 
 
 # Running
