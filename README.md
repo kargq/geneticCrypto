@@ -1,13 +1,14 @@
 # Compiling
 
-Opening the project in intelliJ should work. I did test that on one of the lab computers.
+Just Opening the project in intelliJ should work.
 
-Otherwise,
-Import project using intelliJ.
-File>New> project from existing sources
+Otherwise, Import project using intelliJ.
+
+`File>New> project from existing sources`
+
 or import project from the intelliJ start dialog
 
->From external model> gradle> defaults should be fine and finish.
+`From external model> gradle> defaults should be fine and finish.`
 
 Or, compile using gradle: -
 ./gradlew build
